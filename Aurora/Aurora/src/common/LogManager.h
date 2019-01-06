@@ -12,6 +12,14 @@
 
 #include "Singleton.h"
 
+#define LOG_END() LogManager::s_log_end
+#define LOG() LogManager::GetInstance()->Log()
+#define LOG_INFO() LOG() << "[INFO]"
+#define LOG_ERROR() LOG() << "[ERROR]"
+#define LOG_DEBUG() LOG() << "[DEBUG]"
+#define LOG_WARNING() LOG() << "[WARNING]"
+#define LOG_TRACE() LOG() << "[TARCE]"
+
 namespace aurora
 {	
 	struct LogEnd

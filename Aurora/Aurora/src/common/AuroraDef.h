@@ -18,14 +18,6 @@ class_name##Ptr Make##class_name##Ptr(Args&& ... args) \
 	return std::make_shared<class_name##>(std::forward<Args>(args)...); \
 }
 
-#define LOG_END() LogManager::s_log_end
-#define LOG() LogManager::GetInstance()->Log()
-#define LOG_INFO() LOG() << "[INFO]"
-#define LOG_ERROR() LOG() << "[ERROR]"
-#define LOG_DEBUG() LOG() << "[DEBUG]"
-#define LOG_WARNING() LOG() << "[WARNING]"
-#define LOG_TRACE() LOG() << "[TARCE]"
-
 const uint32_t s_DefautltLayer = 0;
 
 namespace aurora
