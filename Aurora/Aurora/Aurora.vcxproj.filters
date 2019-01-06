@@ -225,9 +225,6 @@
     <ClInclude Include="src\resources\MeshLoader.h">
       <Filter>src\resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\resources\TextureLoader.h">
-      <Filter>src\resources</Filter>
-    </ClInclude>
     <ClInclude Include="src\renderer\Material.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
@@ -318,6 +315,21 @@
     <ClInclude Include="src\renderer\FrameBufferObject.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer\RenderTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\Resources.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ResLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\TextureLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\MeshLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\App3D.cpp">
@@ -366,9 +378,6 @@
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="src\resources\MeshLoader.cpp">
-      <Filter>src\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\TextureLoader.cpp">
       <Filter>src\resources</Filter>
     </ClCompile>
     <ClCompile Include="src\renderer\Material.cpp">
@@ -448,6 +457,21 @@
     </ClCompile>
     <ClCompile Include="src\renderer\FrameBufferObject.cpp">
       <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\RenderTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ResLoadDesc.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\Resources.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\TextureLoadDesc.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\MeshLoadDesc.cpp">
+      <Filter>src\resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

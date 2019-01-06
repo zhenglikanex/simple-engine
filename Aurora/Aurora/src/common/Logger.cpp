@@ -34,15 +34,4 @@ namespace aurora {
 			set_open(ostream->is_open());
 		}
 	}
-
-	void Logger::Log(const char* message) const
-	{
-		if (is_open()) {
-			//¼ÇÂ¼Ê±¼ä
-			auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-			struct tm tt;
-			localtime_s(&tt,&time);
-			*ostream_ << std::put_time(&tt, "%Y-%m-%d %X") << " " << message << std::endl;
-		}
-	}
 }

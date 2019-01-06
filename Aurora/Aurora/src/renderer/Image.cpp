@@ -80,7 +80,7 @@ namespace aurora
 				}
 				else 
 				{
-					LOG_ERROR() << "不支持当前图片的像素格式: " + file;
+					LOG_ERROR() << "不支持当前图片的像素格式: " << file << LOG_END();
 
 					stbi_image_free(data_);
 					data_ = nullptr;
@@ -90,7 +90,7 @@ namespace aurora
 			}
 			else
 			{
-				LOG_ERROR() << "图片加载出错: " + file;
+				LOG_ERROR() << "图片加载出错: " << file << LOG_END();
 
 				stbi_image_free(data_);
 				data_ = nullptr;
@@ -100,7 +100,7 @@ namespace aurora
 		}
 		else
 		{
-			LOG_ERROR() << "不支持当前类型图片格式: " + file;
+			LOG_ERROR() << "不支持当前类型图片格式: " << file << LOG_END();
 		}
 	}
 

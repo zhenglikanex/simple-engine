@@ -24,7 +24,7 @@ namespace aurora
 		context_ptr_ = Context::GetInstance();
 		if (!context_ptr_)
 		{
-			LOG_ERROR() << "Context Initalized Failed!";
+			LOG_ERROR() << "Context Initalized Failed!" << LOG_END();
 			return false;
 		}
 

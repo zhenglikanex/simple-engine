@@ -18,11 +18,13 @@ class_name##Ptr Make##class_name##Ptr(Args&& ... args) \
 	return std::make_shared<class_name##>(std::forward<Args>(args)...); \
 }
 
-#define LOG_INFO() aurora::LogManager::s_info_log
-#define LOG_ERROR() aurora::LogManager::s_error_log
-#define LOG_DEBUG() aurora::LogManager::s_debug_log
-#define LOG_WARNING() aurora::LogManager::s_warning_log
-#define LOG_TRACE() aurora::LogManager::s_trace_log
+#define LOG_END() LogManager::s_log_end
+#define LOG() LogManager::GetInstance()->Log()
+#define LOG_INFO() LOG() << "[INFO]"
+#define LOG_ERROR() LOG() << "[ERROR]"
+#define LOG_DEBUG() LOG() << "[DEBUG]"
+#define LOG_WARNING() LOG() << "[WARNING]"
+#define LOG_TRACE() LOG() << "[TARCE]"
 
 const uint32_t s_DefautltLayer = 0;
 
@@ -58,9 +60,21 @@ namespace aurora
 	using SubMeshWeakPtr = std::weak_ptr<SubMesh>;
 	MAKE_SHARED_PTR(SubMesh);
 
+	class Image;
+	using ImagePtr = std::shared_ptr<Image>;
+	MAKE_SHARED_PTR(Image);
+
 	class Texture;
 	using TexturePtr = std::shared_ptr<Texture>;
 	MAKE_SHARED_PTR(Texture);
+
+	class Texture2D;
+	using Texture2DPtr = std::shared_ptr<Texture2D>;
+	MAKE_SHARED_PTR(Texture2D);
+
+	class TextureCube;
+	using TextureCubePtr = std::shared_ptr<TextureCube>;
+	MAKE_SHARED_PTR(TextureCube);
 
 	class Material;
 	using MaterialPtr = std::shared_ptr<Material>;
@@ -69,6 +83,10 @@ namespace aurora
 	class Shader;
 	using ShaderPtr = std::shared_ptr<Shader>;
 	MAKE_SHARED_PTR(Shader);
+
+	class FrameBufferObject;
+	using FrameBufferObjectPtr = std::shared_ptr<Shader>;
+	MAKE_SHARED_PTR(FrameBufferObject);
 
 	class IComponent;
 	using IComponentPtr = std::shared_ptr<IComponent>;

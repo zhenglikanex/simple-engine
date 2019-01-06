@@ -21,10 +21,21 @@ namespace aurora
 
 		Logger(const std::string& file);
 
-		void Log(const char* message) const;
-
 		void set_open(bool open) { open_ = open; }
 		bool is_open() const { return open_; }
+
+		template<typename T>
+		Logger& operator<<(const T& value)
+		{
+			if (is_open()) {
+				////¼ÇÂ¼Ê±¼ä
+				//auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+				//struct tm tt;
+				//localtime_s(&tt, &time);
+				//*ostream_ << std::put_time(&tt, "%Y-%m-%d %X") << value;
+				*ostream_ << value;
+			}
+		}
 	private:
 		LoggerTarget target_;
 		std::string file_;

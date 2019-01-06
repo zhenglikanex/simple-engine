@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2DAF2D1C-1416-4976-91A9-F36C970CAC71}</ProjectGuid>
     <RootNamespace>Aurora</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -204,16 +204,20 @@
     <ClInclude Include="src\renderer\OGLRenderer.h" />
     <ClInclude Include="src\renderer\OGLSupport.h" />
     <ClInclude Include="src\renderer\RenderOperation.h" />
+    <ClInclude Include="src\renderer\RenderTexture.h" />
     <ClInclude Include="src\renderer\Shader.h" />
     <ClInclude Include="src\renderer\SubMesh.h" />
     <ClInclude Include="src\renderer\Texture.h" />
     <ClInclude Include="src\renderer\VertexLayout.h" />
     <ClInclude Include="src\resources\MaterialLoader.h" />
+    <ClInclude Include="src\resources\MeshLoadDesc.h" />
     <ClInclude Include="src\resources\MeshLoader.h" />
+    <ClInclude Include="src\resources\ResLoadDesc.h" />
     <ClInclude Include="src\resources\ResLoader.h" />
     <ClInclude Include="src\resources\ResManager.h" />
+    <ClInclude Include="src\resources\Resources.h" />
     <ClInclude Include="src\resources\ShaderLoader.h" />
-    <ClInclude Include="src\resources\TextureLoader.h" />
+    <ClInclude Include="src\resources\TextureLoadDesc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\GL\src\glad.c" />
@@ -254,14 +258,18 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="src\renderer\RenderTexture.cpp" />
     <ClCompile Include="src\renderer\Shader.cpp" />
     <ClCompile Include="src\renderer\SubMesh.cpp" />
     <ClCompile Include="src\renderer\Texture.cpp" />
     <ClCompile Include="src\resources\MaterialLoader.cpp" />
+    <ClCompile Include="src\resources\MeshLoadDesc.cpp" />
     <ClCompile Include="src\resources\MeshLoader.cpp" />
+    <ClCompile Include="src\resources\ResLoadDesc.cpp" />
     <ClCompile Include="src\resources\ResManager.cpp" />
+    <ClCompile Include="src\resources\Resources.cpp" />
     <ClCompile Include="src\resources\ShaderLoader.cpp" />
-    <ClCompile Include="src\resources\TextureLoader.cpp" />
+    <ClCompile Include="src\resources\TextureLoadDesc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

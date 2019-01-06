@@ -227,7 +227,7 @@ namespace aurora
 			
 			error_info[length + 1] = '\0';
 
-			LOG_ERROR() << file_identifer.res_name() + shader_type + "±àÒë´íÎó : " + error_info;
+			LOG_ERROR() << file_identifer.res_name() << shader_type << "±àÒë´íÎó : " << error_info << LOG_END();
 		}
 
 		return id;
@@ -262,7 +262,7 @@ namespace aurora
 
 			error_info[length + 1] = '\0';
 
-			LOG_ERROR() << effect_name_ + "ÎÄ¼þ±àÒë³ö´í : " + error_info;
+			LOG_ERROR() << effect_name_ << "ÎÄ¼þ±àÒë³ö´í : " << error_info << LOG_END();
 		}
 		
 		glDeleteShader(vs_shader);

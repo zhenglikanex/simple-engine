@@ -2,6 +2,7 @@
 #define FRAME_BUFFER_OBJECT_H_
 
 #include "OGLSupport.h"
+#include "AuroraDef.h"
 
 namespace aurora
 {
@@ -16,18 +17,14 @@ namespace aurora
 			kDepthStencil
 		};
 
-		FrameBufferAttachment(AttachmentType type, uint32_t width, uint32_t height);
+		FrameBufferAttachment(AttachmentType type);
 		virtual ~FrameBufferAttachment();
 
 		virtual void AttachToFBO(GLuint fbo,uint32_t index) = 0;
 
 		AttachmentType type() const { return type_; }
-		uint32_t width() const { return width_; }
-		uint32_t height() const{ return height_; }
 	protected:
 		AttachmentType type_;
-		uint32_t width_;
-		uint32_t height_;
 		GLenum attach_type_;
 	};
 
@@ -36,12 +33,12 @@ namespace aurora
 	class TextureBufferAttachment : public FrameBufferAttachment
 	{
 	public:
-		TextureBufferAttachment(AttachmentType type, uint32_t width, uint32_t height);
+		TextureBufferAttachment(AttachmentType type,const TexturePtr& texture);
 		virtual ~TextureBufferAttachment();
 
 		void AttachToFBO(GLuint fbo,uint32_t index) override;
 	private:
-		GLuint tex_;
+		TexturePtr texture_;
 	};
 
 	// äÖÈ¾¸½¼þ
@@ -54,6 +51,8 @@ namespace aurora
 		void AttachToFBO(GLuint fbo,uint32_t index) override;
 	private:
 		GLuint rbo_;
+		uint32_t width_;
+		uint32_t height_;
 	};
 
 	class FrameBufferObject
@@ -71,9 +70,9 @@ namespace aurora
 		void AttachAttachment(const FrameBufferAttachment& attachment);
 		void DeattchAttachment(const FrameBufferAttachment& attachment);
 
-		GLuint fbo() const { return fbo_; }
+		GLuint id() const { return id_; }
 	private:
-		GLuint fbo_;
+		GLuint id_;
 		GLint old_fbo_;
 		bool is_valid_;
 	};

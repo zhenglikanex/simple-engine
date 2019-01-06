@@ -1,25 +1,22 @@
-#include "MeshLoader.h"
+#include "MeshLoadDesc.h"
 
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <map>
 #include <vector>
 
 #include "FileHelper.h"
 #include "Mesh.h"
 #include "SubMesh.h"
 #include "VertexLayout.h"
-#include "TextureLoader.h"
 #include "Material.h"
-#include "ShaderLoader.h"
+#include "Resources.h"
+
 
 // SubMesh对应于aiMesh
 // Mesh只是一个SubMesh的容器,相当于一个Model的网格的集合
 
 namespace aurora
 {
-	TexturePtr MeshLoader::GetTexture(aiMaterial *mat, aiTextureType type)
+	Texture2DPtr MeshLoadDesc::GetTexture(aiMaterial *mat, aiTextureType type)
 	{
 		// 目前只支持一张纹理
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -27,14 +24,14 @@ namespace aurora
 			aiString str;
 			mat->GetTexture(type, i, &str);
 
-			auto tex_ptr = TextureManager::GetInstance()->LoadRes(directory_ + "/" + str.C_Str());
-			return tex_ptr;
+			auto texture = LoadTexture2D(directory_ + "/" + str.C_Str());
+			return texture;
 		}
 
-		return TexturePtr();
+		return nullptr;
 	}
 
-	MaterialPtr MeshLoader::ProcessMaterail(aiMaterial *mat)
+	MaterialPtr MeshLoadDesc::ProcessMaterail(aiMaterial *mat)
 	{
 		auto ToTexChannel = [](aiTextureType type)
 		{
@@ -47,16 +44,16 @@ namespace aurora
 		};
 
 		auto material_ptr = MakeMaterialPtr();
-		
+
 		auto tex_noraml = GetTexture(mat, aiTextureType_NORMALS);
 		auto tex_diffuse = GetTexture(mat, aiTextureType_DIFFUSE);
 		auto tex_specular = GetTexture(mat, aiTextureType_SPECULAR);
-		
+
 		if (tex_noraml)
 		{
 			material_ptr->AttachTexture(ToTexChannel(aiTextureType_NORMALS), tex_noraml);
 		}
-		
+
 		if (tex_diffuse)
 		{
 			material_ptr->AttachTexture(ToTexChannel(aiTextureType_DIFFUSE), tex_diffuse);
@@ -66,7 +63,7 @@ namespace aurora
 		{
 			material_ptr->AttachTexture(ToTexChannel(aiTextureType_SPECULAR), tex_specular);
 		}
-		
+
 		// 根据纹理选择添加的Shader
 		ShaderPtr shader_ptr;
 
@@ -86,7 +83,7 @@ namespace aurora
 		{
 			shader_ptr = ShaderManager::s_kDiffuseSpecularShader;
 		}
-		else if(tex_noraml)
+		else if (tex_noraml)
 		{
 			shader_ptr = ShaderManager::s_kNoramlShader;
 		}
@@ -98,7 +95,7 @@ namespace aurora
 		{
 			shader_ptr = ShaderManager::s_kSpecularShader;
 		}
-		
+
 		// 如果没有,赋予一simpleshader
 		if (!shader_ptr)
 		{
@@ -110,7 +107,7 @@ namespace aurora
 		return material_ptr;
 	}
 
-	SubMeshPtr MeshLoader::ProcessSubMesh(const MeshPtr& mesh_ptr,aiMesh * ai_mesh, const aiScene *scene)
+	SubMeshPtr MeshLoadDesc::ProcessSubMesh(const MeshPtr& mesh_ptr, aiMesh * ai_mesh, const aiScene *scene)
 	{
 		std::vector<Vertex_P3FN3FT2FT3FB3F> vertices;
 		std::vector<uint32_t> indexs;
@@ -127,7 +124,7 @@ namespace aurora
 
 			vertices.push_back(vertex);
 		}
-		
+
 		//现在通过每个网格的面（一个面是一个网格它的三角形）并检索相应的顶点索引
 		for (uint32_t i = 0; i < ai_mesh->mNumFaces; ++i) {
 			aiFace face = ai_mesh->mFaces[i];
@@ -145,26 +142,26 @@ namespace aurora
 		return submesh_ptr;
 	}
 
-	void MeshLoader::ProcessNode(const MeshPtr& mesh_ptr,aiNode* node, const aiScene* scene)
+	void MeshLoadDesc::ProcessNode(const MeshPtr& mesh_ptr, aiNode* node, const aiScene* scene)
 	{
 		for (uint32_t i = 0; i < node->mNumMeshes; ++i)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			mesh_ptr->AddSubMesh(ProcessSubMesh(mesh_ptr,mesh, scene));
+			mesh_ptr->AddSubMesh(ProcessSubMesh(mesh_ptr, mesh, scene));
 		}
 
 		for (uint32_t i = 0; i < node->mNumChildren; ++i)
 		{
-			ProcessNode(mesh_ptr,node->mChildren[i], scene);
+			ProcessNode(mesh_ptr, node->mChildren[i], scene);
 		}
 	}
 
-	MeshPtr MeshLoader::Load(const std::string& name)
+	std::shared_ptr<void> MeshLoadDesc::Create()
 	{
-		auto full_path = FileHelper::GetInstance()->GetFullPath(name);
+		auto full_path = FileHelper::GetInstance()->GetFullPath(name());
 		if (full_path.empty())
 		{
-			return MeshPtr();
+			return nullptr;
 		}
 
 		Assimp::Importer importer;
@@ -172,14 +169,14 @@ namespace aurora
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			LOG_ERROR() << "Error::ASSIMP::" << importer.GetErrorString() << LOG_END();
-			return MeshPtr();
+			return nullptr;
 		}
 
 		MeshPtr mesh_ptr = MakeMeshPtr();
 
 		// 保存模型的目录,用于加载纹理
-		directory_ = name.substr(0, name.find_last_of('/'));
-		ProcessNode(mesh_ptr,scene->mRootNode, scene);
+		directory_ = name().substr(0, name().find_last_of('/'));
+		ProcessNode(mesh_ptr, scene->mRootNode, scene);
 
 		return mesh_ptr;
 	}

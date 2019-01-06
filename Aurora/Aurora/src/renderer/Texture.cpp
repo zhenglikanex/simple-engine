@@ -4,78 +4,51 @@
 
 namespace aurora
 {
-	const Texture::PixelFormatByOGLTexInfoMap Texture::s_kPixelFormatByOGLTexInfoMap
+	Texture::Texture(GLenum type,uint32_t width,uint32_t height,OGLTexFormatInfo format_info)
+		: type_(type)
+		, format_info_(format_info)
+		, width_(width)
+		, height_(height)
+		, is_linear_filter_(false)
+		, is_nearest_filter_(false)
+		, is_mimap_(false)
 	{
-		{ Image::PixelFormat::UNKNOWN,Texture::OGLTexFormatInfo(0,0,0,0,false,false) },
-		{ Image::PixelFormat::RED,Texture::OGLTexFormatInfo(GL_RED,GL_RED,GL_UNSIGNED_BYTE,8,false,false) },
-		{ Image::PixelFormat::RGB888,Texture::OGLTexFormatInfo(GL_RGB8,GL_RGB8,GL_UNSIGNED_BYTE,24,false,false) },
-		{ Image::PixelFormat::RGBA8888,Texture::OGLTexFormatInfo(GL_RGBA,GL_RGBA,GL_UNSIGNED_BYTE,32,false,true) }
-	};
-
-	Texture::Texture()
-		:tex_format_(s_kPixelFormatByOGLTexInfoMap.at(Image::PixelFormat::UNKNOWN))
-		,is_linear_filter_(false)
-		,is_nearest_filter_(false)
-		,is_mimap_(false)
-	{
-		glGenTextures(1, &tex_id_);
-		tex_type_ = GL_TEXTURE_2D;
+		glGenTextures(1, &id_);
 	}
 
 	Texture::~Texture()
 	{
-		glDeleteTextures(1, &tex_id_);
+		glDeleteTextures(1, &id_);
 	}
 
-	bool Texture::InitWithImage(const Image& image)
+	void Texture::Bind(int32_t unit /* = -1 */)
 	{
-		if (image.IsNull())
-		{
-			return false;
-		}
-
-		auto iter = s_kPixelFormatByOGLTexInfoMap.find(image.pixel_format());
-		if (iter == s_kPixelFormatByOGLTexInfoMap.end())
-		{
-			return false;
-		}
-
-		auto tex_info = iter->second;
-
-		Bind();
-
-		if (tex_info.compressed_)
-		{
-
-		}
-		else
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, tex_info.format_, tex_info.type_, image.data());
-		}
-
-		ApplyNearestFilter();
-
-		return true;
-	}
-
-	void Texture::Bind()
-	{
-		if (!tex_id_)
+		if (!id_)
 		{
 			return;
 		}
 
-		glBindTexture(GL_TEXTURE_2D, tex_id_);
+		if (unit >= 0)
+		{
+			glActiveTexture(GL_TEXTURE0 + unit);
+		}
+
+		glBindTexture(type_, id_);
+	}
+
+	void Texture::UnBind()
+	{
+		glBindTexture(type_, 0);
 	}
 
 	void Texture::GenerateMimap()
 	{
-		if (!tex_id_)
+		if (!id_)
 		{
 			return;
 		}
 
-		glGenerateMipmap(tex_id_);
+		glGenerateMipmap(id_);
 		is_mimap_ = true;
 
 		if (is_nearest_filter_)
@@ -92,7 +65,7 @@ namespace aurora
 
 	void Texture::ApplyNearestFilter()
 	{
-		if (!tex_id_)
+		if (!id_)
 		{
 			return;
 		}
@@ -101,7 +74,7 @@ namespace aurora
 		{
 			return;
 		}
-		
+
 		is_nearest_filter_ = true;
 		is_linear_filter_ = false;
 
@@ -121,7 +94,7 @@ namespace aurora
 
 	void Texture::ApplyLinearFilter()
 	{
-		if (!tex_id_)
+		if (!id_)
 		{
 			return;
 		}
@@ -138,21 +111,50 @@ namespace aurora
 
 		if (is_mimap_)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(type_, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		}
 		else
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(type_, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(type_, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	
-	void Texture::UpdateTexData(const void* data,GLint offset_x,GLint offset_y,GLsizei width,GLsizei height)
+
+	Texture2D::Texture2D(uint32_t width, uint32_t height, OGLTexFormatInfo format_info, const void* data /* = nullptr */)
+		:Texture(GL_TEXTURE_2D,width,height,format_info)
 	{
-		if (tex_id_)
+		Bind();
+
+		glTexImage2D(type_, 0, format_info_.internal_format_, width_, height_, 0, format_info_.format_, format_info_.type_, data);
+
+		ApplyNearestFilter();
+	}
+
+	void Texture2D::UpdateData(const void* data, GLint mimap_level, GLint offset_x, GLint offset_y, GLsizei width, GLsizei height)
+	{
+		Bind();
+		glTexSubImage2D(type_, mimap_level, offset_x, offset_y, width, height, format_info_.format_, format_info_.type_, data);
+	}
+
+	/*---------------------------------------------------------------------------------------------------*/
+	TextureCube::TextureCube(uint32_t width, uint32_t height, OGLTexFormatInfo format_info, const std::array<const void *, 6>& datas /* = */ )
+		: Texture(GL_TEXTURE_CUBE_MAP,width,height,format_info)
+	{
+		Bind();
+
+		for (uint32_t i = 0; i < 6; ++i)
 		{
-			glTexSubImage2D(GL_TEXTURE_2D, 0, offset_x, offset_y, width, height, tex_format_.format_, tex_format_.type_, data);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format_info.internal_format_, width_, height_, 0, format_info_.format_, format_info_.type_,datas[i]);
 		}
+
+		ApplyNearestFilter();
+	}
+
+	void TextureCube::UpdateData(GLenum face, const void* data, GLint mimap_level, GLint offset_x, GLint offset_y, GLsizei width, GLsizei height)
+	{
+		Bind();
+
+		glTexSubImage2D(face, mimap_level, offset_x, offset_y, width, height, format_info_.format_, format_info_.type_, data);
 	}
 }

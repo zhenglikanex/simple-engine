@@ -1,11 +1,11 @@
 #include "FrameBufferObject.h"
 
+#include "Texture.h"
+
 namespace aurora
 {
-	FrameBufferAttachment::FrameBufferAttachment(AttachmentType type, uint32_t width, uint32_t height)
+	FrameBufferAttachment::FrameBufferAttachment(AttachmentType type)
 		: type_(type)
-		, width_(width)
-		, height_(height)
 	{
 	}
 
@@ -14,8 +14,8 @@ namespace aurora
 
 	}
 
-	TextureBufferAttachment::TextureBufferAttachment(AttachmentType type, uint32_t width, uint32_t height)
-		:FrameBufferAttachment(type,width,height)
+	TextureBufferAttachment::TextureBufferAttachment(AttachmentType type,const TexturePtr& texture)
+		:FrameBufferAttachment(type)
 	{
 
 	}
@@ -30,26 +30,24 @@ namespace aurora
 		switch (type_)
 		{
 		case AttachmentType::kColor:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, tex_);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index,texture_->tex_type(),texture_->tex_id(),0);
 			break;
 		case AttachmentType::kDepth:
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, tex_);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_->tex_type(), texture_->tex_id(),0);
 			break;
 		case AttachmentType::kStencil:
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, tex_);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,texture_->tex_type(), texture_->tex_id(),0);
 			break;
 		case AttachmentType::kDepthStencil:
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, tex_);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_->tex_type(), texture_->tex_id(),0);
 			break;
 		default:
 			break;
 		}
 	}
 
-
-
 	RenderBufferAttachment::RenderBufferAttachment(AttachmentType type, uint32_t width, uint32_t height)
-		:FrameBufferAttachment(type,width,height)
+		:FrameBufferAttachment(type)
 	{
 		glGenRenderbuffers(1, &rbo_);
 		glBindRenderbuffer(GL_RENDERBUFFER, rbo_);
@@ -104,12 +102,12 @@ namespace aurora
 
 	FrameBufferObject::FrameBufferObject()
 	{
-		glGenFramebuffers(1, &fbo_);
+		glGenFramebuffers(1, &id_);
 	}
 
 	FrameBufferObject::~FrameBufferObject()
 	{
-		glDeleteFramebuffers(1, &fbo_);
+		glDeleteFramebuffers(1, &id_);
 	}
 
 	bool FrameBufferObject::IsComplete()
@@ -126,7 +124,7 @@ namespace aurora
 	void FrameBufferObject::Bind()
 	{
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &old_fbo_);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+		glBindFramebuffer(GL_FRAMEBUFFER, id_);
 	}
 
 	void FrameBufferObject::UnBind()

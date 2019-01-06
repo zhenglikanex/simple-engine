@@ -23,7 +23,7 @@ namespace aurora
 		ogl_renderer_ = MakeOGLRendererPtr(config_ptr_);
 		if(!ogl_renderer_ || !ogl_renderer_->Initialize())
 		{
-			LOG_ERROR() << "OGLRenderer Initalize failed!";
+			LOG_ERROR() << "OGLRenderer Initalize failed!" << LOG_END();
 			return false;
 		}
 

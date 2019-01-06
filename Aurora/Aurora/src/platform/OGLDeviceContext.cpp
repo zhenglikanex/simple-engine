@@ -25,13 +25,13 @@ namespace aurora
 		}
 		else
 		{
-			LOG_ERROR() << "Window Create Failed !";
+			LOG_ERROR() << "Window Create Failed !" << LOG_END();
 			return false;
 		}
 
 		if (!gladLoadGL())
 		{
-			LOG_ERROR() << "glad Load Failed !";
+			LOG_ERROR() << "glad Load Failed !" << LOG_END();
 			return false;
 		}
 
