@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2DAF2D1C-1416-4976-91A9-F36C970CAC71}</ProjectGuid>
     <RootNamespace>Aurora</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -176,6 +176,7 @@
     <ClInclude Include="src\common\FileIdentifer.h" />
     <ClInclude Include="src\common\Singleton.h" />
     <ClInclude Include="src\common\StringUtil.h" />
+    <ClInclude Include="src\common\Util.h" />
     <ClInclude Include="src\context\AABB.h" />
     <ClInclude Include="src\context\Camera.h" />
     <ClInclude Include="src\context\Light.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="src\resources\ResLoader.h" />
     <ClInclude Include="src\resources\ResManager.h" />
     <ClInclude Include="src\resources\Resources.h" />
+    <ClInclude Include="src\resources\ShaderLoadDesc.h" />
     <ClInclude Include="src\resources\ShaderLoader.h" />
     <ClInclude Include="src\resources\TextureLoadDesc.h" />
   </ItemGroup>
@@ -268,6 +270,7 @@
     <ClCompile Include="src\resources\ResLoadDesc.cpp" />
     <ClCompile Include="src\resources\ResManager.cpp" />
     <ClCompile Include="src\resources\Resources.cpp" />
+    <ClCompile Include="src\resources\ShaderLoadDesc.cpp" />
     <ClCompile Include="src\resources\ShaderLoader.cpp" />
     <ClCompile Include="src\resources\TextureLoadDesc.cpp" />
   </ItemGroup>

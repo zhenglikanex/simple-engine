@@ -315,9 +315,6 @@
     <ClInclude Include="src\renderer\FrameBufferObject.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\RenderTexture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\resources\Resources.h">
       <Filter>src\resources</Filter>
     </ClInclude>
@@ -329,6 +326,15 @@
     </ClInclude>
     <ClInclude Include="src\resources\MeshLoadDesc.h">
       <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\RenderTexture.h">
+      <Filter>src\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ShaderLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Util.h">
+      <Filter>src\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -458,9 +464,6 @@
     <ClCompile Include="src\renderer\FrameBufferObject.cpp">
       <Filter>src\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\RenderTexture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\resources\ResLoadDesc.cpp">
       <Filter>src\resources</Filter>
     </ClCompile>
@@ -471,6 +474,12 @@
       <Filter>src\resources</Filter>
     </ClCompile>
     <ClCompile Include="src\resources\MeshLoadDesc.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\RenderTexture.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ShaderLoadDesc.cpp">
       <Filter>src\resources</Filter>
     </ClCompile>
   </ItemGroup>
