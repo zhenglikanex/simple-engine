@@ -213,23 +213,11 @@
     <ClInclude Include="src\renderer\SubMesh.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\resources\ResManager.h">
-      <Filter>src\resources</Filter>
-    </ClInclude>
     <ClInclude Include="src\common\FileHelper.h">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="src\resources\ResLoader.h">
-      <Filter>src\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\MeshLoader.h">
-      <Filter>src\resources</Filter>
-    </ClInclude>
     <ClInclude Include="src\renderer\Material.h">
       <Filter>src\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\MaterialLoader.h">
-      <Filter>src\resources</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer\Texture.h">
       <Filter>src\renderer</Filter>
@@ -318,9 +306,6 @@
     <ClInclude Include="src\resources\Resources.h">
       <Filter>src\resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\resources\ResLoadDesc.h">
-      <Filter>src\resources</Filter>
-    </ClInclude>
     <ClInclude Include="src\resources\TextureLoadDesc.h">
       <Filter>src\resources</Filter>
     </ClInclude>
@@ -335,6 +320,15 @@
     </ClInclude>
     <ClInclude Include="src\common\Util.h">
       <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\MaterialLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ResLoadDesc.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\ShaderType.h">
+      <Filter>src\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -377,20 +371,11 @@
     <ClCompile Include="..\..\external\GL\src\glad.c">
       <Filter>external\glad</Filter>
     </ClCompile>
-    <ClCompile Include="src\resources\ResManager.cpp">
-      <Filter>src\resources</Filter>
-    </ClCompile>
     <ClCompile Include="src\common\FileHelper.cpp">
       <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="src\resources\MeshLoader.cpp">
-      <Filter>src\resources</Filter>
-    </ClCompile>
     <ClCompile Include="src\renderer\Material.cpp">
       <Filter>src\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\MaterialLoader.cpp">
-      <Filter>src\resources</Filter>
     </ClCompile>
     <ClCompile Include="src\renderer\Mesh.cpp">
       <Filter>src\renderer</Filter>
@@ -480,6 +465,9 @@
       <Filter>src\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\resources\ShaderLoadDesc.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\MaterialLoadDesc.cpp">
       <Filter>src\resources</Filter>
     </ClCompile>
   </ItemGroup>

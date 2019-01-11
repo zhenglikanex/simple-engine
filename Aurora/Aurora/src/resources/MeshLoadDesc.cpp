@@ -16,6 +16,16 @@
 
 namespace aurora
 {
+	MeshLoadDesc::MeshLoadDesc(const std::string& name)
+	{
+		name_ = name;
+	}
+
+	MeshLoadDesc::~MeshLoadDesc()
+	{
+
+	}
+
 	Texture2DPtr MeshLoadDesc::GetTexture(aiMaterial *mat, aiTextureType type)
 	{
 		// 目前只支持一张纹理
@@ -33,78 +43,35 @@ namespace aurora
 
 	MaterialPtr MeshLoadDesc::ProcessMaterail(aiMaterial *mat)
 	{
-		auto ToTexChannel = [](aiTextureType type)
-		{
-			Material::TexChannel type_by_channel[aiTextureType::aiTextureType_UNKNOWN] = { Material::TexChannel::kMaxChannel };
-			type_by_channel[aiTextureType::aiTextureType_NORMALS] = Material::TexChannel::kNoraml;
-			type_by_channel[aiTextureType::aiTextureType_DIFFUSE] = Material::TexChannel::kDiffuse;
-			type_by_channel[aiTextureType::aiTextureType_SPECULAR] = Material::TexChannel::kSpecular;
-
-			return type_by_channel[type];
-		};
-
-		auto material_ptr = MakeMaterialPtr();
-
 		auto tex_noraml = GetTexture(mat, aiTextureType_NORMALS);
 		auto tex_diffuse = GetTexture(mat, aiTextureType_DIFFUSE);
 		auto tex_specular = GetTexture(mat, aiTextureType_SPECULAR);
 
-		if (tex_noraml)
-		{
-			material_ptr->AttachTexture(ToTexChannel(aiTextureType_NORMALS), tex_noraml);
-		}
-
+		// 根据纹理选择添加的material
+		// TODO：暂时没实现其他材质
+		MaterialPtr material;
 		if (tex_diffuse)
 		{
-			material_ptr->AttachTexture(ToTexChannel(aiTextureType_DIFFUSE), tex_diffuse);
+			if (tex_noraml && tex_specular)
+			{
+				return Resources::s_kSimpleMtl->Clone();
+			}
+			else if(tex_noraml) 
+			{
+				return Resources::s_kSimpleMtl->Clone();
+			}
+			else if (tex_specular)
+			{
+				return Resources::s_kSimpleMtl->Clone();
+			}
+			else {
+				return Resources::s_kSimpleMtl->Clone();
+			}
+
+			return Resources::s_kSimpleMtl->Clone();
 		}
 
-		if (tex_specular)
-		{
-			material_ptr->AttachTexture(ToTexChannel(aiTextureType_SPECULAR), tex_specular);
-		}
-
-		// 根据纹理选择添加的Shader
-		ShaderPtr shader_ptr;
-
-		if (tex_noraml && tex_diffuse && tex_specular)
-		{
-			shader_ptr = ShaderManager::s_kNormalDiffuseSpecularShader;
-		}
-		else if (tex_noraml && tex_diffuse)
-		{
-			shader_ptr = ShaderManager::s_kNoramlDiffuseShader;
-		}
-		else if (tex_noraml && tex_specular)
-		{
-			shader_ptr = ShaderManager::s_kNoramlSpecularShader;
-		}
-		else if (tex_diffuse && tex_specular)
-		{
-			shader_ptr = ShaderManager::s_kDiffuseSpecularShader;
-		}
-		else if (tex_noraml)
-		{
-			shader_ptr = ShaderManager::s_kNoramlShader;
-		}
-		else if (tex_diffuse)
-		{
-			shader_ptr = ShaderManager::s_kDiffuseShader;
-		}
-		else if (tex_specular)
-		{
-			shader_ptr = ShaderManager::s_kSpecularShader;
-		}
-
-		// 如果没有,赋予一simpleshader
-		if (!shader_ptr)
-		{
-			shader_ptr = ShaderManager::s_kSimpleShader;
-		}
-
-		material_ptr->set_shader_ptr(shader_ptr);
-
-		return material_ptr;
+		return Resources::s_kSimpleMtl->Clone();
 	}
 
 	SubMeshPtr MeshLoadDesc::ProcessSubMesh(const MeshPtr& mesh_ptr, aiMesh * ai_mesh, const aiScene *scene)

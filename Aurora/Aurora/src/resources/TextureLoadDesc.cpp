@@ -16,9 +16,8 @@ namespace aurora
 	};
 
 	Texture2DLoadDesc::Texture2DLoadDesc(const std::string& name)
-		: ResLoadDesc(name)
 	{
-		
+		name_ = name;
 	}
 
 	Texture2DLoadDesc::~Texture2DLoadDesc()
@@ -52,11 +51,9 @@ namespace aurora
 		const std::string& right,
 		const std::string& front,
 		const std::string& back)
-
-		: ResLoadDesc(top + bottom + left + right + front + back)
-		, files_({top,bottom,left,right,front,back})
+		: files_({top,bottom,left,right,front,back})
 	{
-
+		name_ = top + bottom + left + right + front + back;
 	}
 
 	TextureCubeLoadDesc::TextureCubeLoadDesc(const std::string& floder, const std::string& ext)

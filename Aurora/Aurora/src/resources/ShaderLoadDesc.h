@@ -13,8 +13,8 @@ namespace aurora
 
 		virtual std::shared_ptr<void> Create() override;
 	private:
-		filesystem::path vs_path_;
-		filesystem::path ps_path_;
+		std::string vs_file_;
+		std::string ps_file_;
 	};
 }
 

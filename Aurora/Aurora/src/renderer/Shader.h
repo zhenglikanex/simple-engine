@@ -22,10 +22,9 @@ namespace aurora
 
 		using NameByUniformMap = std::unordered_map<std::string,UnkownValue>;
 
-		Shader(const std::string& effect_name,const std::string& vs_file,const std::string& fs_file);
+		Shader(const std::string& vs_file,const std::string& fs_file);
 		~Shader();
 
-		const std::string& effect_name() const { return effect_name_; }
 		const GLuint id() { return id_; }
 	public:
 		GLint GetUniformLocation(const std::string& name) const;
@@ -53,9 +52,9 @@ namespace aurora
 
 		bool UpdateLocalValue(const std::string& name, const void* memory, size_t size);
 	private:
-		std::string effect_name_;
 		GLuint id_;
-
+		std::string vs_file_;
+		std::string ps_file_;
 		NameByUniformMap name_by_uniform_map_;
 	};
 }
