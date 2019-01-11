@@ -9,6 +9,7 @@
 #include "VertexLayout.h"
 #include "Material.h"
 #include "Resources.h"
+#include "Texture.h"
 
 
 // SubMesh对应于aiMesh
@@ -49,29 +50,35 @@ namespace aurora
 
 		// 根据纹理选择添加的material
 		// TODO：暂时没实现其他材质
-		MaterialPtr material;
+		MaterialPtr material = nullptr;
 		if (tex_diffuse)
 		{
 			if (tex_noraml && tex_specular)
 			{
-				return Resources::s_kSimpleMtl->Clone();
+				material = Resources::s_kSimpleMtl->Clone();
+				material->AttachTexture("tex_diffuse", tex_diffuse);
+				material->AttachTexture("tex_noraml",tex_noraml);
+				material->AttachTexture("tex_specular", tex_specular);
 			}
 			else if(tex_noraml) 
 			{
-				return Resources::s_kSimpleMtl->Clone();
+				material = Resources::s_kSimpleMtl->Clone();
+				material->AttachTexture("tex_diffuse", tex_diffuse);
+				material->AttachTexture("tex_noraml", tex_noraml);
 			}
 			else if (tex_specular)
 			{
-				return Resources::s_kSimpleMtl->Clone();
+				material = Resources::s_kSimpleMtl->Clone();
+				material->AttachTexture("tex_diffuse", tex_diffuse);
+				material->AttachTexture("tex_specular", tex_specular);
 			}
 			else {
-				return Resources::s_kSimpleMtl->Clone();
+				material = Resources::s_kSimpleMtl->Clone();
+				material->AttachTexture("tex_diffuse", tex_diffuse);
 			}
-
-			return Resources::s_kSimpleMtl->Clone();
 		}
 
-		return Resources::s_kSimpleMtl->Clone();
+		return material;
 	}
 
 	SubMeshPtr MeshLoadDesc::ProcessSubMesh(const MeshPtr& mesh_ptr, aiMesh * ai_mesh, const aiScene *scene)

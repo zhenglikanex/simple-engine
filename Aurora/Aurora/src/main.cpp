@@ -7,9 +7,7 @@
 #include "Config.h"
 #include "App3D.h"
 #include "Clock.h"
-#include "MeshLoader.h"
-#include "TextureLoader.h"
-#include "MaterialLoader.h"
+#include "Resources.h"
 #include "FileHelper.h"
 #include "MeshRenderer.h"
 #include "GameObject.h"
@@ -56,7 +54,7 @@ public:
 
 		FileHelper::GetInstance()->AddSearchPath("/../Asset/");
 
-		auto mesh = MeshManager::GetInstance()->LoadRes("model/nanosuit.obj");
+		auto mesh = LoadMesh("model/nanosuit.obj");
 
 		auto game_object = CREATE_GAMEOBJECT(GameObjectFactory::s_kMeshGameObject);
 		game_object->GetComponent<MeshRenderer>()->set_mesh(mesh);

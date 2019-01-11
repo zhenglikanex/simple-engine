@@ -30,6 +30,7 @@ namespace aurora
 	inline std::ostream& operator<<(std::ostream& os, LogEnd)
 	{
 		os << std::endl;
+		return os;
 	}
 
 	class LogManager : public Singleton<LogManager>

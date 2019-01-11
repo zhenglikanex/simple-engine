@@ -28,7 +28,7 @@ namespace aurora
 		std::shared_ptr<void> FindResource(const std::string& name);
 
 		template<typename ResType>
-		auto LoadResource(const ResLoadDesc& res_load_desc)
+		std::shared_ptr<ResType> LoadResource(ResLoadDesc& res_load_desc)
 		{
 			auto resource = FindResource(res_load_desc.name());
 			if (resource)
@@ -39,7 +39,7 @@ namespace aurora
 			resource = res_load_desc.Create();
 			if (resource)
 			{
-				name_by_resource_map_.insert(res_load_desc.name(), resource);
+				name_by_resource_map_.emplace(res_load_desc.name(), resource);
 				return std::static_pointer_cast<ResType>(resource);
 			}
 
@@ -51,12 +51,7 @@ namespace aurora
 
 	//各种资源加载函数(不用模板实现,如果用模板实现的话用到的地方必须包含资源的ResLoadDesc头文件,不可取)
 	Texture2DPtr LoadTexture2D(const std::string& name);
-	TextureCubePtr LoadTextureCube(const std::string& top,
-		const std::string& bottom,
-		const std::string& left,
-		const std::string& right,
-		const std::string& front,
-		const std::string& back);
+	TextureCubePtr LoadTextureCube(const std::string& top,const std::string& bottom,const std::string& left,const std::string& right,const std::string& front,const std::string& back);
 	TextureCubePtr LoadTextureCube(const std::string& floder, const std::string& ext);
 	ShaderPtr LoadShader(const std::string& vs_file, const std::string& ps_file);
 	MaterialPtr LoadMaterial(const std::string& name);

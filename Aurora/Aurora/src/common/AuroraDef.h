@@ -77,7 +77,7 @@ namespace aurora
 	MAKE_SHARED_PTR(Shader);
 
 	class FrameBufferObject;
-	using FrameBufferObjectPtr = std::shared_ptr<Shader>;
+	using FrameBufferObjectPtr = std::shared_ptr<FrameBufferObject>;
 	MAKE_SHARED_PTR(FrameBufferObject);
 
 	class IComponent;

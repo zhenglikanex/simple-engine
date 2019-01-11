@@ -8,6 +8,8 @@
 namespace aurora
 {
 	Shader::Shader(const std::string& vs_file, const std::string& fs_file)
+		: vs_file_(vs_file)
+		, ps_file_(fs_file)
 	{
 		Load(vs_file, fs_file);
 	}
@@ -261,10 +263,10 @@ namespace aurora
 
 			error_info[length + 1] = '\0';
 
-			LOG_ERROR() << "±àÒë³ö´í : "
-						<< "\tvs_file: " << vs_file_ << "\n"
-						<< "\tps_file: " << ps_file_ << "\n"
-						<< "\terror:" << error_info << LOG_END();
+			LOG_ERROR() << "±àÒë³ö´í : \n"
+						<< "vs_file: " << vs_file_ << "\n"
+						<< "ps_file: " << ps_file_ << "\n"
+						<< "error:" << error_info << LOG_END();
 		}
 		
 		glDeleteShader(vs_shader);

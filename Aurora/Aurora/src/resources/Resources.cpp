@@ -1,4 +1,5 @@
 #include "Resources.h"
+#include "Material.h"
 #include "TextureLoadDesc.h"
 #include "ShaderLoadDesc.h"
 #include "MeshLoadDesc.h"
@@ -17,7 +18,7 @@ namespace aurora
 
 	void Resources::CreateDefaultMaterial()
 	{
-		auto simple_shader = LoadShader("shader/fs_simple_shader.fs", "shader/vs_simple_shader.vs");
+		auto simple_shader = LoadShader("shader/vs_simple_shader.vs", "shader/fs_simple_shader.fs");
 		Resources::s_kSimpleMtl = MakeMaterialPtr(simple_shader);
 
 		/*Resources::s_kNoramlMtl = MakeMaterialPtr(simple_shader);
@@ -32,7 +33,7 @@ namespace aurora
 	std::shared_ptr<void> Resources::FindResource(const std::string& name)
 	{
 		auto iter = name_by_resource_map_.find(name);
-		if (iter != name_by_resource_map_.end())
+		if (iter == name_by_resource_map_.end())
 		{
 			return nullptr;
 		}

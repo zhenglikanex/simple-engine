@@ -19,7 +19,7 @@ namespace aurora
 			return nullptr;
 		}
 
-		
+
 
 		return nullptr;
 	}

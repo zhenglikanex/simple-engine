@@ -1,6 +1,5 @@
 #include "Context.h"
-
-#include "ShaderLoader.h"
+#include "Resources.h"
 #include "Config.h"
 #include "OGLRenderer.h"
 #include "Camera.h"
@@ -27,7 +26,8 @@ namespace aurora
 			return false;
 		}
 
-		ShaderManager::GetInstance();
+		// 创建默认资源
+		Resources::GetInstance()->CreateDefaultMaterial();
 
 		return true;
 	}

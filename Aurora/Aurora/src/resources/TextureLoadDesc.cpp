@@ -30,6 +30,7 @@ namespace aurora
 		Image image(name());
 		if (image.IsNull())
 		{
+			LOG_INFO() << "Texture¼ÓÔØÊ§°Ü£º" << name_ << LOG_END();
 			return nullptr;
 		}
 

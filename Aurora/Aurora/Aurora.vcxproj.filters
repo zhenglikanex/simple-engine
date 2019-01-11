@@ -177,9 +177,6 @@
     <ClInclude Include="src\common\StringUtil.h">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="src\common\Logger.h">
-      <Filter>src\common</Filter>
-    </ClInclude>
     <ClInclude Include="src\common\LogManager.h">
       <Filter>src\common</Filter>
     </ClInclude>
@@ -224,9 +221,6 @@
     </ClInclude>
     <ClInclude Include="src\renderer\Shader.h">
       <Filter>src\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resources\ShaderLoader.h">
-      <Filter>src\resources</Filter>
     </ClInclude>
     <ClInclude Include="src\common\Data.h">
       <Filter>src\common</Filter>
@@ -330,6 +324,9 @@
     <ClInclude Include="src\renderer\ShaderType.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\app\Aurora.h">
+      <Filter>src\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\App3D.cpp">
@@ -345,9 +342,6 @@
       <Filter>src\platform</Filter>
     </ClCompile>
     <ClCompile Include="src\common\Config.cpp">
-      <Filter>src\common</Filter>
-    </ClCompile>
-    <ClCompile Include="src\common\Logger.cpp">
       <Filter>src\common</Filter>
     </ClCompile>
     <ClCompile Include="src\common\LogManager.cpp">
@@ -385,9 +379,6 @@
     </ClCompile>
     <ClCompile Include="src\renderer\Shader.cpp">
       <Filter>src\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resources\ShaderLoader.cpp">
-      <Filter>src\resources</Filter>
     </ClCompile>
     <ClCompile Include="src\common\Data.cpp">
       <Filter>src\common</Filter>

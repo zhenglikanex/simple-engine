@@ -30,16 +30,16 @@ namespace aurora
 		switch (type_)
 		{
 		case AttachmentType::kColor:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index,texture_->tex_type(),texture_->tex_id(),0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index,texture_->type(),texture_->id(),0);
 			break;
 		case AttachmentType::kDepth:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_->tex_type(), texture_->tex_id(),0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_->type(), texture_->id(),0);
 			break;
 		case AttachmentType::kStencil:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,texture_->tex_type(), texture_->tex_id(),0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,texture_->type(), texture_->id(),0);
 			break;
 		case AttachmentType::kDepthStencil:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_->tex_type(), texture_->tex_id(),0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_->type(), texture_->id(),0);
 			break;
 		default:
 			break;

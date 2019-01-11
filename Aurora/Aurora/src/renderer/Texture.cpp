@@ -14,6 +14,8 @@ namespace aurora
 		, is_mimap_(false)
 	{
 		glGenTextures(1, &id_);
+		Bind();
+		ApplyNearestFilter();
 	}
 
 	Texture::~Texture()
@@ -124,11 +126,7 @@ namespace aurora
 	Texture2D::Texture2D(uint32_t width, uint32_t height, OGLTexFormatInfo format_info, const void* data /* = nullptr */)
 		:Texture(GL_TEXTURE_2D,width,height,format_info)
 	{
-		Bind();
-
 		glTexImage2D(type_, 0, format_info_.internal_format_, width_, height_, 0, format_info_.format_, format_info_.type_, data);
-
-		ApplyNearestFilter();
 	}
 
 	void Texture2D::UpdateData(const void* data, GLint mimap_level, GLint offset_x, GLint offset_y, GLsizei width, GLsizei height)
@@ -141,14 +139,10 @@ namespace aurora
 	TextureCube::TextureCube(uint32_t width, uint32_t height, OGLTexFormatInfo format_info, const std::array<const void *, 6>& datas /* = */ )
 		: Texture(GL_TEXTURE_CUBE_MAP,width,height,format_info)
 	{
-		Bind();
-
 		for (uint32_t i = 0; i < 6; ++i)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format_info.internal_format_, width_, height_, 0, format_info_.format_, format_info_.type_,datas[i]);
 		}
-
-		ApplyNearestFilter();
 	}
 
 	void TextureCube::UpdateData(GLenum face, const void* data, GLint mimap_level, GLint offset_x, GLint offset_y, GLsizei width, GLsizei height)

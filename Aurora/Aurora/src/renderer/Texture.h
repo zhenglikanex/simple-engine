@@ -72,9 +72,6 @@ namespace aurora
 	public:
 		Texture2D(uint32_t width, uint32_t height, OGLTexFormatInfo format_info, const void* data = nullptr);
 
-		bool Init(uint32_t width, uint32_t height, OGLTexFormatInfo format_info,const void* data = nullptr);
-		bool Init(const Image& image);
-
 		void UpdateData(const void* data,GLint mimap_level,GLint offset_x,GLint offset_y,GLsizei width,GLsizei height);
 	};
 

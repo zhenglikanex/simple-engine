@@ -5,6 +5,7 @@
 namespace aurora
 {
 	ShaderLoadDesc::ShaderLoadDesc(const std::string& vs_file, const std::string& ps_file)
+		:vs_file_(vs_file),ps_file_(ps_file)
 	{
 		name_ = vs_file + ps_file;
 	}

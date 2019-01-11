@@ -30,9 +30,13 @@ namespace aurora
 		return 0;
 	}
 
-	void Material::AttachTexture(const std::string& name, TexturePtr texture)
+	void Material::AttachTexture(const std::string& name,const TexturePtr& texture)
 	{
-		texture_map_.emplace(name, texture);
+		if (texture)
+		{
+			texture_map_.insert(std::make_pair(name, texture));
+		}
+		
 	}
 
 	TexturePtr Material::GetTexture(const std::string& name)
@@ -117,6 +121,8 @@ namespace aurora
 			return;
 		}
 
+		shader_ptr_->Bind();
+
 		int texture_unit = 0;
 		// 提交当前material包含的纹理
 		for (auto iter = texture_map_.cbegin(); iter != texture_map_.cend(); ++iter)
@@ -132,7 +138,7 @@ namespace aurora
 				// 提交纹理单元到对应的uniform变量
 				shader_ptr_->CommitInt(name, texture_unit);
 
-				texture_unit += texture_unit;
+				++texture_unit;
 			}
 		}
 

@@ -25,7 +25,7 @@ namespace aurora
 
 		uint64_t GetMaterialId() const;
 
-		void AttachTexture(const std::string& name, TexturePtr texture);
+		void AttachTexture(const std::string& name,const TexturePtr& texture);
 		TexturePtr GetTexture(const std::string& name);
 
 		void CommitBool(const std::string& name, bool value);
