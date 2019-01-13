@@ -20,10 +20,13 @@ namespace aurora
 		static MaterialPtr s_kNoramlSpecularMtl;
 		static MaterialPtr s_kDiffuseSpecularMtl;
 		static MaterialPtr s_kNormalDiffuseSpecularMtl;
+
+		static ShaderPtr s_kShadowShader;
 	public:
 		using NameByResourceMap = std::unordered_map<std::string, std::shared_ptr<void>>;
 
 		void CreateDefaultMaterial();
+		void CreateDefaultShader();
 
 		std::shared_ptr<void> FindResource(const std::string& name);
 

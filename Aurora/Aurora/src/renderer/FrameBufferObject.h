@@ -67,8 +67,8 @@ namespace aurora
 		void Bind();
 		void UnBind();
 
-		void AttachAttachment(const FrameBufferAttachment& attachment);
-		void DeattchAttachment(const FrameBufferAttachment& attachment);
+		void AttachAttachment(const FrameBufferAttachmentPtr& attachment,uint32_t index = 0);
+		//void DeattchAttachment(const FrameBufferAttachmentPtr& attachment);
 
 		GLuint id() const { return id_; }
 	private:

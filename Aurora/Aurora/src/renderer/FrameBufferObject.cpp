@@ -17,7 +17,7 @@ namespace aurora
 	TextureBufferAttachment::TextureBufferAttachment(AttachmentType type,const TexturePtr& texture)
 		:FrameBufferAttachment(type)
 	{
-
+		texture_ = texture;
 	}
 
 	TextureBufferAttachment::~TextureBufferAttachment()
@@ -139,14 +139,14 @@ namespace aurora
 		}	
 	}
 
-	void FrameBufferObject::AttachAttachment(const FrameBufferAttachment& attachment)
+	void FrameBufferObject::AttachAttachment(const FrameBufferAttachmentPtr& attachment,uint32_t index /* = 0 */)
 	{
-		
+		attachment->AttachToFBO(id_, index);
 	}
 
-	void FrameBufferObject::DeattchAttachment(const FrameBufferAttachment& attachment)
+	/*void FrameBufferObject::DeattchAttachment(const FrameBufferAttachmentPtr& attachment)
 	{
-		
-	}
+
+	}*/
 }
 

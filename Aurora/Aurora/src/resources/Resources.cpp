@@ -16,6 +16,8 @@ namespace aurora
 	MaterialPtr Resources::s_kDiffuseSpecularMtl = nullptr;
 	MaterialPtr Resources::s_kNormalDiffuseSpecularMtl = nullptr;
 
+	ShaderPtr Resources::s_kShadowShader = nullptr;
+
 	void Resources::CreateDefaultMaterial()
 	{
 		auto simple_shader = LoadShader("shader/vs_simple_shader.vs", "shader/fs_simple_shader.fs");
@@ -28,6 +30,11 @@ namespace aurora
 		Resources::s_kNoramlSpecularMtl = MakeMaterialPtr(simple_shader);
 		Resources::s_kDiffuseSpecularMtl = MakeMaterialPtr(simple_shader);
 		Resources::s_kNormalDiffuseSpecularMtl = MakeMaterialPtr(simple_shader);*/
+	}
+
+	void Resources::CreateDefaultShader()
+	{
+		Resources::s_kShadowShader = LoadShader("shader/vs_shadow.vs", "shader/fs_shadow.fs");
 	}
 
 	std::shared_ptr<void> Resources::FindResource(const std::string& name)

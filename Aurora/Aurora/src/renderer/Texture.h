@@ -16,6 +16,7 @@ namespace aurora
 		// OGL的纹理格式封装
 		struct OGLTexFormatInfo
 		{
+			OGLTexFormatInfo(){}
 			OGLTexFormatInfo(GLenum internal_format, GLenum format, GLenum type, int bpp, bool compressed, bool alpha)
 				: internal_format_(internal_format)
 				, format_(format)
@@ -28,7 +29,7 @@ namespace aurora
 			}
 
 			GLenum internal_format_;	//内部格式(即上传到显存中的格式,就是图片格式在纹理中的数据格式类型())
-			GLenum format_;				//图片data的像素格式
+			GLenum format_;				//纹理格式
 			GLenum type_;				//像素的字节格式
 			int bpp_;					//像素位数
 			bool compressed_;			//是否压缩

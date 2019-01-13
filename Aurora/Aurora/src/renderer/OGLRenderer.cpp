@@ -4,9 +4,13 @@
 
 #include "Config.h"
 #include "Window.h"
+#include "Resources.h"
 #include "Material.h"
 #include "Shader.h"
 #include "LightSystem.h"
+#include "RenderTexture.h"
+#include "FrameBufferObject.h"
+
 
 namespace aurora
 {
@@ -52,6 +56,9 @@ namespace aurora
 
 		glEnable(GL_DEPTH_TEST);
 
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+
 		return true;
 	}
 
@@ -80,8 +87,65 @@ namespace aurora
 		glViewport(x, y, width, height);
 	}
 
+	void OGLRenderer::RenderShadowPass(const RenderGroupMap& render_group_map)
+	{
+		auto& point_lights = LightSystem::GetInstance()->point_lights();
+		auto& directional_lights = LightSystem::GetInstance()->directional_lights();
+		auto& spot_lights = LightSystem::GetInstance()->spot_lights();
+
+		auto shadow_shader = Resources::s_kShadowShader;
+		if (!shadow_shader)
+		{
+			return;
+		}
+
+		shadow_shader->Bind();
+
+		// 方向光阴影
+		dl_shadow_rt_->fbo()->Bind();
+		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
+
+		for (auto i = 0; i < directional_lights.size(); ++i)
+		{
+			auto light = directional_lights[i];
+			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+
+			float near_plane = 1.0f, far_plane = 7.5f;
+			glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+			shadow_shader->CommitMat4("light_view", light_view);
+			shadow_shader->CommitMat4("projection", projection);
+
+			for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end();++rgm_iter)
+			{
+				auto render_group = rgm_iter->second;
+				for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
+				{
+					auto render_queue = rg_iter->second;
+					for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
+					{
+						auto render_object = *rq_iter;
+						shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
+
+						DrawRenderOperation(render_object.GetRenderOperation());
+					}
+				}
+			}
+		}
+
+		dl_shadow_rt_->fbo()->UnBind();
+
+
+		// 点光源阴影
+		pl_shadow_rt_->fbo()->Bind();
+		ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
+		pl_shadow_rt_->fbo()->UnBind();
+	}
+
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
+
+		RenderShadowPass(render_group_map);
 
 		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{

@@ -7,6 +7,7 @@
 #include "RenderGroup.h"
 #include "RenderQueue.h"
 #include "VertexLayout.h"
+#include "RenderTexture.h"
 
 #include "glm/glm.hpp"
 
@@ -36,6 +37,9 @@ namespace aurora
 		void set_projection_matrix(const glm::mat4& projection_matrix) { projection_matrix_ = projection_matrix; }
 		const glm::mat4& projection_matrix() const { return projection_matrix_; }
 	private:
+		// 渲染阴影贴图
+		void RenderShadowPass(const RenderGroupMap& render_group_map);
+
 		void Render(const RenderGroup& render_group);
 		void Render(const RenderQueue& render_queue);
 		void StartRenderObject(const RenderObject& render_object);
@@ -54,6 +58,9 @@ namespace aurora
 		glm::vec3 camera_position_;
 		glm::mat4 camera_matrix_;
 		glm::mat4 projection_matrix_;
+
+		RenderTexturePtr dl_shadow_rt_;		// 方向光的阴影
+		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
 	};
 }
 

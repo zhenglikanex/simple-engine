@@ -76,9 +76,33 @@ namespace aurora
 	using ShaderPtr = std::shared_ptr<Shader>;
 	MAKE_SHARED_PTR(Shader);
 
+	class FrameBufferAttachment;
+	using FrameBufferAttachmentPtr = std::shared_ptr<FrameBufferAttachment>;
+	MAKE_SHARED_PTR(FrameBufferAttachment);
+
+	class TextureBufferAttachment;
+	using TextureBufferAttachmentPtr = std::shared_ptr<TextureBufferAttachment>;
+	MAKE_SHARED_PTR(TextureBufferAttachment);
+
+	class RenderBufferAttachment;
+	using RenderBufferAttachmentPtr = std::shared_ptr<RenderBufferAttachment>;
+	MAKE_SHARED_PTR(RenderBufferAttachment);
+
 	class FrameBufferObject;
 	using FrameBufferObjectPtr = std::shared_ptr<FrameBufferObject>;
 	MAKE_SHARED_PTR(FrameBufferObject);
+
+	class BaseRenderTexture;
+	using BaseRenderTexturePtr = std::shared_ptr<BaseRenderTexture>;
+	MAKE_SHARED_PTR(BaseRenderTexture);
+
+	class RenderTexture;
+	using RenderTexturePtr = std::shared_ptr<RenderTexture>;
+	MAKE_SHARED_PTR(RenderTexture);
+
+	class RenderTextureCube;
+	using RenderTextureCubePtr = std::shared_ptr<RenderTextureCube>;
+	MAKE_SHARED_PTR(RenderTextureCube);
 
 	class IComponent;
 	using IComponentPtr = std::shared_ptr<IComponent>;
