@@ -137,6 +137,11 @@ namespace aurora
 	using PointLightPtr = std::shared_ptr<PointLight>;
 	using PointLightWeakPtr = std::weak_ptr<PointLight>;
 	MAKE_SHARED_PTR(PointLight);
+
+	class DirectionalLight;
+	using DirectionalLightPtr = std::shared_ptr<DirectionalLight>;
+	using DirectionalLightWeakPtr = std::weak_ptr<DirectionalLight>;
+	MAKE_SHARED_PTR(DirectionalLight);
 }
 
 #endif

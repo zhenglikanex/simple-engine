@@ -11,7 +11,7 @@ namespace aurora
 	{
 		{ Image::PixelFormat::UNKNOWN,Texture::OGLTexFormatInfo(0,0,0,0,false,false) },
 		{ Image::PixelFormat::RED,Texture::OGLTexFormatInfo(GL_RED,GL_RED,GL_UNSIGNED_BYTE,8,false,false) },
-		{ Image::PixelFormat::RGB888,Texture::OGLTexFormatInfo(GL_RGB8,GL_RGB8,GL_UNSIGNED_BYTE,24,false,false) },
+		{ Image::PixelFormat::RGB888,Texture::OGLTexFormatInfo(GL_RGB,GL_RGB,GL_UNSIGNED_BYTE,24,false,false) },
 		{ Image::PixelFormat::RGBA8888,Texture::OGLTexFormatInfo(GL_RGBA,GL_RGBA,GL_UNSIGNED_BYTE,32,false,true) }
 	};
 

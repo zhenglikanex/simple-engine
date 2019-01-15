@@ -63,6 +63,12 @@ namespace aurora
 		fbo_->UnBind();
 	}
 
+	TexturePtr BaseRenderTexture::GetColorTexture(uint32_t index) const
+	{
+		assert(index >= 0 && index < color_textures_.size()); 
+		return color_textures_[index];
+	}
+
 	void BaseRenderTexture::Init(TextureFormatType type, uint32_t width, uint32_t height, uint32_t color_texture_count, const std::function<TexturePtr(uint32_t, uint32_t, Texture::OGLTexFormatInfo)>& creator)
 	{
 		Texture::OGLTexFormatInfo format_info;
@@ -94,7 +100,7 @@ namespace aurora
 			fbo_->AttachAttachment(attachment);
 		}
 
-		if (color_texture_count < 0)
+		if (color_texture_count <= 0)
 		{
 			glReadBuffer(GL_NONE);
 			glDrawBuffer(GL_NONE);

@@ -10,7 +10,17 @@
 #include "LightSystem.h"
 #include "RenderTexture.h"
 #include "FrameBufferObject.h"
+#include "stb_image.h"
 
+float sreen_quad[] = 
+{
+	-1.0f,-1.0f,0.0f, 0.0f,0.0f,
+	-1.0f,1.0f,0.0f, 0.0f,1.0f,
+	1.0f,1.0f,0.0f, 1.0f,1.0f,
+	-1.0f,-1.0f,0.0f, 0.0f,0.0f,
+	1.0f,1.0f,0.0f, 1.0f,1.0f,
+	1.0f,-1.0f,0.0f, 1.0f,0.0f
+};
 
 namespace aurora
 {
@@ -56,8 +66,29 @@ namespace aurora
 
 		glEnable(GL_DEPTH_TEST);
 
-		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 1, true, false);
 		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+
+		shader1 = LoadShader("shader/test.vs", "shader/test.fs");
+		shader2 = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
+
+		texture_ = LoadTexture2D("bg_67_01.jpg");
+
+		shader2->CommitInt("tex_shadow", 0);
+
+		glBindVertexArray(vao_);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(sreen_quad), sreen_quad, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glBindVertexArray(0);
 
 		return true;
 	}
@@ -72,7 +103,7 @@ namespace aurora
 	// 进行渲染准备
 	void OGLRenderer::RenderBegin()
 	{
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -145,12 +176,46 @@ namespace aurora
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
 
-		RenderShadowPass(render_group_map);
+		//RenderShadowPass(render_group_map);
 
-		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		dl_shadow_rt_->fbo()->Bind();
+
+		/*glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+
+		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
+		glBindVertexArray(vao_);
+
+		if (shader1)
+		{
+			shader1->Bind();
+			glDrawArrays(GL_TRIANGLES, 0, sizeof(sreen_quad) / sizeof(float));
+		}
+
+		dl_shadow_rt_->fbo()->UnBind();
+		ChangeViewport(0, 0, 1024, 768);
+		if (shader2)
+		{
+			auto shadow_texture = dl_shadow_rt_->GetColorTexture(0);
+			if (shadow_texture)
+			{
+				shadow_texture->Bind();
+			}
+
+			//texture_->Bind();
+
+			shader2->Bind();
+
+			glDrawArrays(GL_TRIANGLES, 0,6);
+			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+			//glBindVertexArray(0);
+		}
+
+		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}
+		}*/
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)

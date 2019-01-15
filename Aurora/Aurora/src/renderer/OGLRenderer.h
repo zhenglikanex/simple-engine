@@ -61,6 +61,9 @@ namespace aurora
 
 		RenderTexturePtr dl_shadow_rt_;		// 方向光的阴影
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
+		ShaderPtr shader1;
+		ShaderPtr shader2;
+		TexturePtr texture_;
 	};
 }
 

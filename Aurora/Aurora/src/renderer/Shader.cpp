@@ -53,7 +53,7 @@ namespace aurora
 		}
 
 		auto location = GetUniformLocation(name);
-		if (location > 0)
+		if (location >= 0)
 		{
 			glUniform1i(location, value);
 		}

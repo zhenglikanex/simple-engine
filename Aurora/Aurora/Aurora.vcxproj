@@ -76,11 +76,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;../../external/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -89,11 +89,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;../../external/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -179,6 +179,7 @@
     <ClInclude Include="src\common\Util.h" />
     <ClInclude Include="src\context\AABB.h" />
     <ClInclude Include="src\context\Camera.h" />
+    <ClInclude Include="src\context\DirectionalLight.h" />
     <ClInclude Include="src\context\Light.h" />
     <ClInclude Include="src\context\LightSystem.h" />
     <ClInclude Include="src\context\MeshRenderer.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="src\context\component\GameObjectFactory.cpp" />
     <ClCompile Include="src\context\component\IComponent.cpp" />
     <ClCompile Include="src\context\Context.cpp" />
+    <ClCompile Include="src\context\DirectionalLight.cpp" />
     <ClCompile Include="src\context\Light.cpp" />
     <ClCompile Include="src\context\MeshRenderer.cpp" />
     <ClCompile Include="src\context\PointLight.cpp" />

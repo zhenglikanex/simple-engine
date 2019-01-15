@@ -25,7 +25,7 @@ namespace aurora
 
 		virtual ~BaseRenderTexture() = 0;
 
-		TexturePtr GetColorTexture(uint32_t index) const { assert(index > 0 && index < color_textures_.size()); return color_textures_[index]; }
+		TexturePtr GetColorTexture(uint32_t index) const;
 
 		uint32_t width() const { return width_; }
 		uint32_t height() const { return height_; }

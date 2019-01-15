@@ -15,6 +15,8 @@ namespace aurora
 	{
 		glGenTextures(1, &id_);
 		Bind();
+		glTexParameteri(type_, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(type_, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		ApplyNearestFilter();
 	}
 
