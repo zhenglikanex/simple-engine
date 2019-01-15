@@ -27,6 +27,7 @@ namespace aurora
 
 	void TextureBufferAttachment::AttachToFBO(GLuint fbo,uint32_t index)
 	{
+		texture_->Bind();
 		switch (type_)
 		{
 		case AttachmentType::kColor:

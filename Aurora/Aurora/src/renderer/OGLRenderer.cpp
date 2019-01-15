@@ -69,13 +69,15 @@ namespace aurora
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 1, true, false);
-		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);
+		if (!dl_shadow_rt_->fbo()->IsComplete())
+		{
+			LOG() << "dl_shadow_rt_ is not completed" << LOG_END();
+		}
+		//pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
 
 		shader1 = LoadShader("shader/test.vs", "shader/test.fs");
 		shader2 = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
-
-		texture_ = LoadTexture2D("bg_67_01.jpg");
 
 		shader2->CommitInt("tex_shadow", 0);
 
@@ -176,27 +178,17 @@ namespace aurora
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
 
-		//RenderShadowPass(render_group_map);
+		RenderShadowPass(render_group_map);
 
-		dl_shadow_rt_->fbo()->Bind();
+		
 
-		/*glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
-
-		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
-		glBindVertexArray(vao_);
-
-		if (shader1)
-		{
-			shader1->Bind();
-			glDrawArrays(GL_TRIANGLES, 0, sizeof(sreen_quad) / sizeof(float));
-		}
-
-		dl_shadow_rt_->fbo()->UnBind();
 		ChangeViewport(0, 0, 1024, 768);
+
+		glBindVertexArray(vao_);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		if (shader2)
 		{
-			auto shadow_texture = dl_shadow_rt_->GetColorTexture(0);
+			auto shadow_texture = dl_shadow_rt_->depth_texture();
 			if (shadow_texture)
 			{
 				shadow_texture->Bind();

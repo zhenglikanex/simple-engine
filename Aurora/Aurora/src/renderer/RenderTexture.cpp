@@ -19,7 +19,8 @@ namespace aurora
 		{
 			Texture::OGLTexFormatInfo format_info;
 			format_info.internal_format_ = GL_DEPTH24_STENCIL8;
-			format_info.format_ = GL_UNSIGNED_INT_24_8;
+			format_info.format_ = GL_DEPTH_STENCIL;
+			format_info.type_ = GL_UNSIGNED_INT_24_8;
 			format_info.compressed_ = false;
 			depth_stencil_texture_ = creator(width_, height_, format_info);
 			auto attachment = MakeTextureBufferAttachmentPtr(FrameBufferAttachment::AttachmentType::kDepthStencil, depth_stencil_texture_);
@@ -44,6 +45,7 @@ namespace aurora
 			Texture::OGLTexFormatInfo format_info;
 			format_info.internal_format_ = GL_DEPTH_COMPONENT;
 			format_info.format_ = GL_DEPTH_COMPONENT;
+			format_info.type_ = GL_FLOAT;
 			format_info.compressed_ = false;
 			depth_texture_ = creator(width_, height_, format_info);
 			auto attachment = MakeTextureBufferAttachmentPtr(FrameBufferAttachment::AttachmentType::kDepth, depth_texture_);
@@ -54,6 +56,7 @@ namespace aurora
 			Texture::OGLTexFormatInfo format_info;
 			format_info.internal_format_ = GL_STENCIL_INDEX;
 			format_info.format_ = GL_STENCIL_INDEX;
+			format_info.type_ = GL_FLOAT;
 			format_info.compressed_ = false;
 			stencil_textrue_ = creator(width_, height_, format_info);
 			auto attachment = MakeTextureBufferAttachmentPtr(FrameBufferAttachment::AttachmentType::kStencil, stencil_textrue_);
@@ -75,7 +78,7 @@ namespace aurora
 
 		if (type_ == TextureFormatType::kRGBA)
 		{
-			format_info.internal_format_ = GL_RGBA;
+			format_info.internal_format_ = GL_RGB;
 		}
 		else if (type_ == TextureFormatType::kFloat)
 		{
@@ -86,10 +89,11 @@ namespace aurora
 			format_info.internal_format_ = GL_RGBA16F;
 		}
 
-		format_info.format_ = GL_RGBA;
+		format_info.format_ = GL_RGB;
 		format_info.bpp_ = 32;
+		format_info.type_ = GL_UNSIGNED_BYTE;
 		format_info.compressed_ = false;
-		format_info.alpha_ = true;
+		format_info.alpha_ = false;
 
 		for (uint32_t i = 0; i < color_texture_count; ++i)
 		{
