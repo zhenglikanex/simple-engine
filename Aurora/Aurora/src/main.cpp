@@ -15,6 +15,7 @@
 #include "GameObjectFactory.h"
 #include "Context.h"
 #include "PointLight.h"
+#include "DirectionalLight.h"
 
 using namespace aurora;
 
@@ -52,19 +53,24 @@ public:
 
 		//NameByUniformMap map;
 
-		//FileHelper::GetInstance()->AddSearchPath("/../Asset/");
+		FileHelper::GetInstance()->AddSearchPath("/../Asset/");
 
-		//auto mesh = LoadMesh("model/nanosuit.obj");
+		auto mesh = LoadMesh("model/nanosuit.obj");
 
-		//auto game_object = CREATE_GAMEOBJECT(GameObjectFactory::s_kMeshGameObject);
-		//game_object->GetComponent<MeshRenderer>()->set_mesh(mesh);
-		////game_object->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -20));
-		////game_object->GetComponent<SceneNode>()->set_scale(glm::vec3(0.5, 0.5, 0.5));
+		auto game_object = CREATE_GAMEOBJECT(GameObjectFactory::s_kMeshGameObject);
+		game_object->GetComponent<MeshRenderer>()->set_mesh(mesh);
+		game_object->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -20));
+		game_object->GetComponent<SceneNode>()->set_scale(glm::vec3(0.5, 0.5, 0.5));
 
-		//Context::GetInstance()->scene_manager().AddToRootNode(game_object);
+		Context::GetInstance()->scene_manager().AddToRootNode(game_object);
 
 		auto camera_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kCameraGameObject);
 		Context::GetInstance()->scene_manager().AddToRootNode(camera_obj);
+
+		auto dl_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kDirectionalLight);
+		dl_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, 10));
+		Context::GetInstance()->scene_manager().AddToRootNode(dl_obj);
+
 
 		//camera_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, 80));
 

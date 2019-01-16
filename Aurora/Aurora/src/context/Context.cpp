@@ -28,6 +28,7 @@ namespace aurora
 
 		// 创建默认资源
 		Resources::GetInstance()->CreateDefaultMaterial();
+		Resources::GetInstance()->CreateDefaultShader();
 
 		return true;
 	}

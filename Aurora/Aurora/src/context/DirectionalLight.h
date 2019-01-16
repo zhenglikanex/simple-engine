@@ -1,5 +1,5 @@
-#ifndef POINT_LIGHT_H_
-#define POINT_LIGHT_H_
+#ifndef DIRECTIONAL_LIGHT_H_
+#define DIRECTIONAL_LIGHT_H_
 
 #include "AuroraDef.h"
 #include "Light.h"

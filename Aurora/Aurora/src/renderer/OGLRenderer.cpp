@@ -143,8 +143,8 @@ namespace aurora
 			auto light = directional_lights[i];
 			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 
-			float near_plane = 1.0f, far_plane = 7.5f;
-			glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+			float near_plane = 1.0f, far_plane = 75.f;
+			glm::mat4 projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
 
 			shadow_shader->CommitMat4("light_view", light_view);
 			shadow_shader->CommitMat4("projection", projection);
@@ -160,6 +160,9 @@ namespace aurora
 						auto render_object = *rq_iter;
 						shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
 
+						glm::vec4 position;
+						std::memcpy(&position, render_object.GetRenderOperation().vertex_buffer().GetRawData(), sizeof(position));
+
 						DrawRenderOperation(render_object.GetRenderOperation());
 					}
 				}
@@ -170,17 +173,14 @@ namespace aurora
 
 
 		// 点光源阴影
-		pl_shadow_rt_->fbo()->Bind();
+		/*pl_shadow_rt_->fbo()->Bind();
 		ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
-		pl_shadow_rt_->fbo()->UnBind();
+		pl_shadow_rt_->fbo()->UnBind();*/
 	}
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
-
 		RenderShadowPass(render_group_map);
-
-		
 
 		ChangeViewport(0, 0, 1024, 768);
 
@@ -204,10 +204,10 @@ namespace aurora
 			//glBindVertexArray(0);
 		}
 
-		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
-		{
-			Render(iter->second);
-		}*/
+		///*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		//{
+		//	Render(iter->second);
+		//}*/
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
