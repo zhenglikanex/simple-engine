@@ -64,6 +64,7 @@ namespace aurora
 		ShaderPtr shader1;
 		ShaderPtr shader2;
 		TexturePtr texture_;
+		GLuint vao1_;
 	};
 }
 

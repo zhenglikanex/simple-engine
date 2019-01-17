@@ -61,6 +61,7 @@ namespace aurora
 		ChangeViewport(0, 0, window_width_, window_height_);
 
 		glGenVertexArrays(1, &vao_);
+		glGenVertexArrays(1, &vao1_);
 		glGenBuffers(1, &vbo_);
 		glGenBuffers(1, &ebo_);
 
@@ -69,19 +70,20 @@ namespace aurora
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 1, true, false);
 		if (!dl_shadow_rt_->fbo()->IsComplete())
 		{
 			LOG() << "dl_shadow_rt_ is not completed" << LOG_END();
 		}
 		//pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
 
+		texture_ = LoadTexture2D("1003.jpg");
 		shader1 = LoadShader("shader/test.vs", "shader/test.fs");
 		shader2 = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
-
+		shader2->Bind();
 		shader2->CommitInt("tex_shadow", 0);
 
-		glBindVertexArray(vao_);
+		glBindVertexArray(vao1_);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(sreen_quad), sreen_quad, GL_STATIC_DRAW);
 
@@ -91,6 +93,7 @@ namespace aurora
 		glEnableVertexAttribArray(1);
 
 		glBindVertexArray(0);
+		
 
 		return true;
 	}
@@ -132,11 +135,17 @@ namespace aurora
 			return;
 		}
 
+		CHECK_GL_ERROR_DEBUG();
 		shadow_shader->Bind();
-
+		
 		// 方向光阴影
 		dl_shadow_rt_->fbo()->Bind();
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		CHECK_GL_ERROR_DEBUG();
+		
 		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
+		CHECK_GL_ERROR_DEBUG();
 
 		for (auto i = 0; i < directional_lights.size(); ++i)
 		{
@@ -144,7 +153,7 @@ namespace aurora
 			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 
 			float near_plane = 1.0f, far_plane = 75.f;
-			glm::mat4 projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+			glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
 
 			shadow_shader->CommitMat4("light_view", light_view);
 			shadow_shader->CommitMat4("projection", projection);
@@ -160,9 +169,6 @@ namespace aurora
 						auto render_object = *rq_iter;
 						shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
 
-						glm::vec4 position;
-						std::memcpy(&position, render_object.GetRenderOperation().vertex_buffer().GetRawData(), sizeof(position));
-
 						DrawRenderOperation(render_object.GetRenderOperation());
 					}
 				}
@@ -170,7 +176,6 @@ namespace aurora
 		}
 
 		dl_shadow_rt_->fbo()->UnBind();
-
 
 		// 点光源阴影
 		/*pl_shadow_rt_->fbo()->Bind();
@@ -181,29 +186,28 @@ namespace aurora
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
 		RenderShadowPass(render_group_map);
-
 		ChangeViewport(0, 0, 1024, 768);
 
-		glBindVertexArray(vao_);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glBindVertexArray(vao1_);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+
 		if (shader2)
 		{
-			auto shadow_texture = dl_shadow_rt_->depth_texture();
+			auto shadow_texture = dl_shadow_rt_->GetColorTexture(0);
 			if (shadow_texture)
 			{
-				shadow_texture->Bind();
+				shadow_texture->Bind(0);
 			}
-
-			//texture_->Bind();
-
 			shader2->Bind();
 
 			glDrawArrays(GL_TRIANGLES, 0,6);
 			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-			//glBindVertexArray(0);
+			glBindVertexArray(0);
 		}
-
+		CHECK_GL_ERROR_DEBUG();
 		///*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		//{
 		//	Render(iter->second);

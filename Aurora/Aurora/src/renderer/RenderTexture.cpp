@@ -78,7 +78,7 @@ namespace aurora
 
 		if (type_ == TextureFormatType::kRGBA)
 		{
-			format_info.internal_format_ = GL_RGB;
+			format_info.internal_format_ = GL_RGBA;
 		}
 		else if (type_ == TextureFormatType::kFloat)
 		{
@@ -89,11 +89,11 @@ namespace aurora
 			format_info.internal_format_ = GL_RGBA16F;
 		}
 
-		format_info.format_ = GL_RGB;
+		format_info.format_ = GL_RGBA;
 		format_info.bpp_ = 32;
 		format_info.type_ = GL_UNSIGNED_BYTE;
 		format_info.compressed_ = false;
-		format_info.alpha_ = false;
+		format_info.alpha_ = true;
 
 		for (uint32_t i = 0; i < color_texture_count; ++i)
 		{

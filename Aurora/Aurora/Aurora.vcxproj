@@ -79,7 +79,7 @@
       <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;../../external/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Release;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -93,7 +93,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Release;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -254,6 +254,7 @@
     <ClCompile Include="src\renderer\Material.cpp" />
     <ClCompile Include="src\renderer\Mesh.cpp" />
     <ClCompile Include="src\renderer\OGLRenderer.cpp" />
+    <ClCompile Include="src\renderer\OGLSupport.cpp" />
     <ClCompile Include="src\renderer\OpenGLSrc.cpp">
       <SubType>
       </SubType>

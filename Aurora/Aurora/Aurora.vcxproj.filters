@@ -467,5 +467,8 @@
     <ClCompile Include="src\context\DirectionalLight.cpp">
       <Filter>src\context</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer\OGLSupport.cpp">
+      <Filter>src\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "Resources.h"
 #include "Texture.h"
+#include "Clock.h"
 
 
 // SubMesh对应于aiMesh
@@ -79,6 +80,7 @@ namespace aurora
 		}
 
 		return material;
+		return nullptr;
 	}
 
 	SubMeshPtr MeshLoadDesc::ProcessSubMesh(const MeshPtr& mesh_ptr, aiMesh * ai_mesh, const aiScene *scene)
@@ -137,7 +139,7 @@ namespace aurora
 		{
 			return nullptr;
 		}
-
+		Clock begin_clock;
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(full_path.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		// check for errors
@@ -146,11 +148,18 @@ namespace aurora
 			return nullptr;
 		}
 
+		Clock end_clock;
+
+		LOG_INFO() << end_clock - begin_clock << LOG_END();
+
 		MeshPtr mesh_ptr = MakeMeshPtr();
 
 		// 保存模型的目录,用于加载纹理
 		directory_ = name().substr(0, name().find_last_of('/'));
 		ProcessNode(mesh_ptr, scene->mRootNode, scene);
+
+		Clock clock;
+		LOG_INFO() << clock - end_clock << LOG_END();
 
 		return mesh_ptr;
 	}
