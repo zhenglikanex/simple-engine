@@ -70,7 +70,7 @@ namespace aurora
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 1, true, false);
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);
 		if (!dl_shadow_rt_->fbo()->IsComplete())
 		{
 			LOG() << "dl_shadow_rt_ is not completed" << LOG_END();
@@ -108,7 +108,7 @@ namespace aurora
 	// 进行渲染准备
 	void OGLRenderer::RenderBegin()
 	{
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -140,7 +140,7 @@ namespace aurora
 		
 		// 方向光阴影
 		dl_shadow_rt_->fbo()->Bind();
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		CHECK_GL_ERROR_DEBUG();
 		
@@ -195,7 +195,7 @@ namespace aurora
 
 		if (shader2)
 		{
-			auto shadow_texture = dl_shadow_rt_->GetColorTexture(0);
+			auto shadow_texture = dl_shadow_rt_->depth_texture();
 			if (shadow_texture)
 			{
 				shadow_texture->Bind(0);
