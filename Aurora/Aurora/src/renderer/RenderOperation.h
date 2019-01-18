@@ -24,21 +24,18 @@ namespace aurora
 			OT_TRIANGLE_FAN = 6,
 		};
 		
-		RenderOperation(OperationType operation_type,const VertexBuffer& vertex_buffer,const IndexBuffer& index_buffer)
+		RenderOperation(OperationType operation_type,const VertexArrayObject& vao)
 			:operation_type_(operation_type)
-			,vertex_buffer_(vertex_buffer)
-			,index_buffer_(index_buffer)
+			, vao_(vao)
 		{
-
+			
 		}
 
 		OperationType operation_type() const { return operation_type_; }
-		const VertexBuffer& vertex_buffer() const { return vertex_buffer_; }
-		const IndexBuffer& index_buffer() const { return index_buffer_; }
+		const VertexArrayObject& vao() const { return vao_; }
 	private:
 		OperationType operation_type_;
-		VertexBuffer vertex_buffer_;
-		IndexBuffer index_buffer_;
+		VertexArrayObject vao_;
 	};
 }
 

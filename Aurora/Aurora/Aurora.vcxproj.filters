@@ -330,6 +330,9 @@
     <ClInclude Include="src\context\DirectionalLight.h">
       <Filter>src\context</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer\VertexArrayObject.h">
+      <Filter>src\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\App3D.cpp">

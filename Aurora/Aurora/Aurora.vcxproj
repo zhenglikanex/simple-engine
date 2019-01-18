@@ -211,6 +211,7 @@
     <ClInclude Include="src\renderer\SubMesh.h" />
     <ClInclude Include="src\renderer\Texture.h" />
     <ClInclude Include="src\renderer\ShaderType.h" />
+    <ClInclude Include="src\renderer\VertexArrayObject.h" />
     <ClInclude Include="src\renderer\VertexLayout.h" />
     <ClInclude Include="src\resources\MaterialLoadDesc.h" />
     <ClInclude Include="src\resources\MeshLoadDesc.h" />

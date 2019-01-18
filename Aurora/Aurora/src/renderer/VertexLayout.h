@@ -36,7 +36,7 @@ namespace aurora
 		glm::vec3 bitangent;
 	};
 
-	static uint32_t VertexSize(VertexLayout vertex_layout)
+	inline uint32_t VertexSize(VertexLayout vertex_layout)
 	{
 		switch (vertex_layout)
 		{
@@ -60,6 +60,8 @@ namespace aurora
 
 		VertexBuffer(const VertexBuffer& rhs);
 		const VertexBuffer& operator=(const VertexBuffer& rhs);
+
+		~VertexBuffer();
 
 		
 		VertexLayout vertex_layout() const { return vertex_layout_; }
@@ -89,7 +91,7 @@ namespace aurora
 		k32Bit,
 	};
 
-	static uint32_t IndexSize(IndexLayout index_layout)
+	inline uint32_t IndexSize(IndexLayout index_layout)
 	{
 		switch (index_layout)
 		{
@@ -113,6 +115,8 @@ namespace aurora
 
 		IndexBuffer(const IndexBuffer& rhs);
 		const IndexBuffer& operator=(const IndexBuffer& rhs);
+
+		~IndexBuffer();
 		
 		IndexLayout index_layout() const { return index_layout_; }
 		uint32_t index_count() const { return index_count_; }
@@ -133,6 +137,24 @@ namespace aurora
 		uint32_t size_;
 		std::shared_ptr<uint8_t> data_;
 		GLuint id_;
+	};
+
+	class VertexArrayObject
+	{
+	public:
+		VertexArrayObject(const VertexBuffer& vertex_buffer,const IndexBuffer& index_buffer);
+		VertexArrayObject(const VertexArrayObject& rhs);
+		const VertexArrayObject& operator=(const VertexArrayObject& rhs);
+
+		~VertexArrayObject();
+
+		GLuint id() const { return id_; }
+		const VertexBuffer& vertex_buffer() const { return vertex_buffer_; }
+		const IndexBuffer& index_buffer() const { return index_buffer_; }
+	private:
+		GLuint id_;
+		VertexBuffer vertex_buffer_;
+		IndexBuffer index_buffer_;
 	};
 }
 

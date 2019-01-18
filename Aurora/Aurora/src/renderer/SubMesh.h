@@ -28,9 +28,10 @@ namespace aurora
 		const MaterialPtr& material_ptr() const { return material_ptr_; }
 	private:
 		MeshWeakPtr mesh_weak_ptr_;
-
+		
 		VertexBuffer vertex_buffer_;
 		IndexBuffer index_buffer_;
+		VertexArrayObject vao_;
 		MaterialPtr material_ptr_;
 	};
 }

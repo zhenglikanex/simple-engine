@@ -8,15 +8,17 @@ namespace aurora
 		:mesh_weak_ptr_(mesh_ptr)
 		,vertex_buffer_(std::move(vertex_buffer))
 		,index_buffer_(std::move(index_buffer))
+		,vao_(vertex_buffer_,index_buffer_)
 	{
 
 	}
 
 	SubMesh::SubMesh(const MeshPtr& mesh_ptr, VertexBuffer&& vertex_buffer, IndexBuffer&& index_buffer, const MaterialPtr& material_ptr)
-		:mesh_weak_ptr_(mesh_ptr)
+		: mesh_weak_ptr_(mesh_ptr)
 		, vertex_buffer_(std::move(vertex_buffer))
 		, index_buffer_(std::move(index_buffer))
 		, material_ptr_(material_ptr)
+		, vao_(vertex_buffer_, index_buffer_)
 	{
 
 	}
@@ -44,6 +46,6 @@ namespace aurora
 
 	RenderOperation SubMesh::GetRenderOperation()
 	{
-		return RenderOperation(RenderOperation::OT_TRIANGLE_LIST, vertex_buffer_, index_buffer_);
+		return RenderOperation(RenderOperation::OT_TRIANGLE_LIST,vao_);
 	}
 }

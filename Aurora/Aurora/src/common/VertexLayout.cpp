@@ -62,6 +62,11 @@ namespace aurora
 		return *this;
 	}
 
+	VertexBuffer::~VertexBuffer()
+	{
+		glDeleteBuffers(1, &id_);
+	}
+
 
 	IndexBuffer::IndexBuffer(IndexLayout index_layout, uint32_t index_count,const uint8_t* data)
 		:index_layout_(index_layout)
@@ -122,5 +127,73 @@ namespace aurora
 		id_ = rhs.id_;
 
 		return *this;
+	}
+
+	IndexBuffer::~IndexBuffer()
+	{
+		glDeleteBuffers(1, &id_);
+	}
+
+	VertexArrayObject::VertexArrayObject(const VertexBuffer& vertex_buffer, const IndexBuffer& index_buffer)
+		:vertex_buffer_(vertex_buffer)
+		,index_buffer_(index_buffer)
+	{
+		glGenVertexArrays(1, &id_);
+		glBindVertexArray(id_);
+
+		// 上传vertex_buffer
+		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_.id());
+
+		// 上传index_buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_.id());
+
+		// 绑定顶点属性
+		switch (vertex_buffer.vertex_layout())
+		{
+		case VertexLayout::kP3FN3FT2F:
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, position));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, normal));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, texcoords));
+			break;
+		case VertexLayout::kP3FN3FT2FT3FB3F:
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			glEnableVertexAttribArray(3);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, position));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, normal));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, texcoords));
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, tangent));
+			glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer_.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, bitangent));
+		default:
+			break;
+		}
+
+		glBindVertexArray(0);
+	}
+
+	VertexArrayObject::VertexArrayObject(const VertexArrayObject& rhs)
+		: id_(rhs.id_)
+		, vertex_buffer_(rhs.vertex_buffer_)
+		, index_buffer_(rhs.index_buffer_)
+	{
+
+	}
+
+	const VertexArrayObject& VertexArrayObject::operator=(const VertexArrayObject& rhs)
+	{
+		vertex_buffer_ = rhs.vertex_buffer_;
+		index_buffer_ = rhs.index_buffer_;
+
+		return *this;
+	}
+
+	VertexArrayObject::~VertexArrayObject()
+	{
+		glDeleteVertexArrays(1, &id_);
 	}
 }

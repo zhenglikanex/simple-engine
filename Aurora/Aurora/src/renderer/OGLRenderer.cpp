@@ -295,48 +295,13 @@ namespace aurora
 
 	void OGLRenderer::DrawRenderOperation(const RenderOperation& render_operation)
 	{
-		auto& vertex_buffer = render_operation.vertex_buffer();
-		auto& index_buffer = render_operation.index_buffer();
+		auto vao = render_operation.vao();
 
 		//绑定缓存
-		glBindVertexArray(vao_);
-
-		// 上传vertex_buffer
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer.id());
-		//glBufferData(GL_ARRAY_BUFFER, vertex_buffer.size(), vertex_buffer.GetRawData(), GL_STREAM_DRAW);
-
-		// 上传index_buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer.id());
-		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer.size(), index_buffer.GetRawData(), GL_STREAM_DRAW);
-
-		// 绑定顶点属性
-		switch (vertex_buffer.vertex_layout())
-		{
-		case VertexLayout::kP3FN3FT2F:
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, position));
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, normal));
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2F, texcoords));
-			break;
-		case VertexLayout::kP3FN3FT2FT3FB3F:
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-			glEnableVertexAttribArray(3);
-			glEnableVertexAttribArray(4);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), 0);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, normal));
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, texcoords));
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, tangent));
-			glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, VertexSize(vertex_buffer.vertex_layout()), (void*)offsetof(Vertex_P3FN3FT2FT3FB3F, bitangent));
-		default:
-			break;
-		}
+		glBindVertexArray(vao.id());
 
 		// 提交渲染
-		glDrawElements(GL_TRIANGLES,render_operation.index_buffer().size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES,vao.index_buffer().size(), GL_UNSIGNED_INT, 0);
 
 		// 取消绑定
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
