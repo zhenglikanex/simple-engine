@@ -21,7 +21,7 @@ namespace aurora
 
 	const SubMeshPtr& Mesh::GetSubMesh(size_t index) const
 	{
-		assert(index > 0 && index < submeshs_.size());
+		assert(index >= 0 && index < submeshs_.size());
 
 		return submeshs_[index];
 	}

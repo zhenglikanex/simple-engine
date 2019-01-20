@@ -110,9 +110,8 @@ namespace aurora
 		}
 
 		auto submesh_ptr = MakeSubMeshPtr(
-			mesh_ptr,
-			VertexBuffer(VertexLayout::kP3FN3FT2FT3FB3F, vertices.size(), (uint8_t*)vertices.data()),
-			IndexBuffer(IndexLayout::k32Bit, indexs.size(), (uint8_t*)indexs.data()),
+			MakeVertexBufferPtr(VertexLayout::kP3FN3FT2FT3FB3F, vertices.size(), (uint8_t*)vertices.data()),
+			MakeIndexBufferPtr(IndexLayout::k32Bit, indexs.size(), (uint8_t*)indexs.data()),
 			ProcessMaterail(scene->mMaterials[ai_mesh->mMaterialIndex]));
 
 		return submesh_ptr;

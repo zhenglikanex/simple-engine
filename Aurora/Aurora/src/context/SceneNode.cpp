@@ -8,9 +8,10 @@
 namespace aurora
 {
 	SceneNode::SceneNode()
-		: position_(0,0,0)
-		,local_position_(0,0,0)
-		,scale_(1,1,1)
+		: position_(0, 0, 0)
+		, local_position_(0, 0, 0)
+		, scale_(1, 1, 1)
+		, rotate_(0, 0, 0)
 		,transform_matrix_(glm::identity<glm::mat4>())
 		,need_update_matrix_(false)
 	{
@@ -139,7 +140,9 @@ namespace aurora
 		{
 			
 			transform_matrix_ = glm::translate(glm::identity<glm::mat4>(), local_position_);
-			//transform_matrix_ = glm::rotate(transform_matrix_,)
+			transform_matrix_ = glm::rotate(transform_matrix_, glm::radians(rotate_.x), glm::vec3(1, 0, 0));
+			transform_matrix_ = glm::rotate(transform_matrix_, glm::radians(rotate_.y), glm::vec3(0, 1, 0));
+			transform_matrix_ = glm::rotate(transform_matrix_, glm::radians(rotate_.z), glm::vec3(0, 0, 1));
 			transform_matrix_ = glm::scale(transform_matrix_, scale_);
 
 			need_update_matrix_ = false;

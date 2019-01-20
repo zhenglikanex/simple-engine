@@ -22,6 +22,7 @@ namespace aurora
 		const static std::string s_kMeshGameObject;
 		const static std::string s_kPointLight;
 		const static std::string s_kDirectionalLight;
+		const static std::string s_kPlane;
 	public:
 		GameObjectFactory();
 		~GameObjectFactory();

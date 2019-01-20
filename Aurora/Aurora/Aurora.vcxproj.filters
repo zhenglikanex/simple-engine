@@ -333,6 +333,9 @@
     <ClInclude Include="src\renderer\VertexArrayObject.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\context\Plane.h">
+      <Filter>src\context</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\App3D.cpp">
@@ -472,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="src\renderer\OGLSupport.cpp">
       <Filter>src\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\context\Plane.cpp">
+      <Filter>src\context</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

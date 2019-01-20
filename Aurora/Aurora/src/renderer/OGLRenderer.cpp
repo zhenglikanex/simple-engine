@@ -60,49 +60,20 @@ namespace aurora
 
 		ChangeViewport(0, 0, window_width_, window_height_);
 
-		glGenVertexArrays(1, &vao_);
-		glGenVertexArrays(1, &vao1_);
-		glGenBuffers(1, &vbo_);
-		glGenBuffers(1, &ebo_);
-
 		glEnable(GL_DEPTH_TEST);
 
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);
-		if (!dl_shadow_rt_->fbo()->IsComplete())
-		{
-			LOG() << "dl_shadow_rt_ is not completed" << LOG_END();
-		}
-		//pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
-
-		texture_ = LoadTexture2D("1003.jpg");
-		shader1 = LoadShader("shader/test.vs", "shader/test.fs");
-		shader2 = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
-		shader2->Bind();
-		shader2->CommitInt("tex_shadow", 0);
-
-		glBindVertexArray(vao1_);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(sreen_quad), sreen_quad, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		glBindVertexArray(0);
-		
+		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);	
+		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
 
 		return true;
 	}
 
 	void OGLRenderer::Destory()
 	{
-		glDeleteVertexArrays(1, &vao_);
-		glDeleteBuffers(1, &vbo_);
-		glDeleteBuffers(1, &ebo_);
+
 	}
 
 	// 进行渲染准备
@@ -135,17 +106,14 @@ namespace aurora
 			return;
 		}
 
-		CHECK_GL_ERROR_DEBUG();
 		shadow_shader->Bind();
 		
 		// 方向光阴影
 		dl_shadow_rt_->fbo()->Bind();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		CHECK_GL_ERROR_DEBUG();
 		
 		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
-		CHECK_GL_ERROR_DEBUG();
 
 		for (auto i = 0; i < directional_lights.size(); ++i)
 		{
@@ -185,33 +153,13 @@ namespace aurora
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
-		RenderShadowPass(render_group_map);
-		ChangeViewport(0, 0, 1024, 768);
+		//RenderShadowPass(render_group_map);
+		//ChangeViewport(0, 0, 1024, 768);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		glBindVertexArray(vao1_);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-
-		if (shader2)
+		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
-			auto shadow_texture = dl_shadow_rt_->depth_texture();
-			if (shadow_texture)
-			{
-				shadow_texture->Bind(0);
-			}
-			shader2->Bind();
-
-			glDrawArrays(GL_TRIANGLES, 0,6);
-			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-			glBindVertexArray(0);
+			Render(iter->second);
 		}
-		CHECK_GL_ERROR_DEBUG();
-		///*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
-		//{
-		//	Render(iter->second);
-		//}*/
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
@@ -255,6 +203,21 @@ namespace aurora
 			auto& directional_lights = LightSystem::GetInstance()->directional_lights();
 			auto& spot_lights = LightSystem::GetInstance()->spot_lights();
 
+			for (auto i = 0; i < directional_lights.size(); ++i)
+			{
+				char position_name[256];
+				sprintf_s(position_name, "directional_lights[%d].directional", i);
+				shader->CommitVec3(position_name, directional_lights[i].directional);
+
+				char color_name[256];
+				sprintf_s(color_name, "directional_lights[%d].color", i);
+				shader->CommitVec3(color_name, directional_lights[i].color);
+
+				char intensity_name[256];
+				sprintf_s(intensity_name, "directional_lights[%d].intensity", i);
+				shader->CommitFloat(intensity_name, directional_lights[i].intensity);
+			}
+
 			for (auto i = 0; i < point_lights.size(); ++i)
 			{
 				char position_name[256];
@@ -295,17 +258,22 @@ namespace aurora
 
 	void OGLRenderer::DrawRenderOperation(const RenderOperation& render_operation)
 	{
-		auto vao = render_operation.vao();
+		auto& vao = render_operation.vao();
 
 		//绑定缓存
-		glBindVertexArray(vao.id());
+		glBindVertexArray(vao->id());
 
 		// 提交渲染
-		glDrawElements(GL_TRIANGLES,vao.index_buffer().size(), GL_UNSIGNED_INT, 0);
+		if (vao->index_buffer()->index_layout() == IndexLayout::k32Bit)
+		{
+			glDrawElements(GL_TRIANGLES, vao->index_buffer()->index_count(), GL_UNSIGNED_INT, 0);
+		}
+		else {
+			glDrawElements(GL_TRIANGLES, vao->index_buffer()->index_count(), GL_UNSIGNED_SHORT, 0);
+		}
+		
 
 		// 取消绑定
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
 }

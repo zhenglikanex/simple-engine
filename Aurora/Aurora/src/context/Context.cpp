@@ -30,6 +30,8 @@ namespace aurora
 		Resources::GetInstance()->CreateDefaultMaterial();
 		Resources::GetInstance()->CreateDefaultShader();
 
+		scene_manager_ = MakeSceneManagerPtr();
+
 		return true;
 	}
 
@@ -43,12 +45,12 @@ namespace aurora
 		if (ogl_renderer_)
 		{
 			// 进行场景更新
-			scene_manager_.Update();
+			scene_manager_->Update();
 
 			ogl_renderer_->RenderBegin();
 
 			// 根据camra进行渲染
-			for (auto& camera : scene_manager_.cameras())
+			for (auto& camera : scene_manager_->cameras())
 			{
 				ogl_renderer_->set_camrea_position(camera->GetComponent<SceneNode>()->position());
 				ogl_renderer_->set_camera_matrix(camera->GetCameraMatrix());

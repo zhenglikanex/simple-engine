@@ -1,6 +1,7 @@
 #ifndef RENDER_OPERATOR_H_
 #define RENDER_OPERATOR_H_
 
+#include "AuroraDef.h"
 #include "VertexLayout.h"
 
 namespace aurora
@@ -24,7 +25,7 @@ namespace aurora
 			OT_TRIANGLE_FAN = 6,
 		};
 		
-		RenderOperation(OperationType operation_type,const VertexArrayObject& vao)
+		RenderOperation(OperationType operation_type,const VertexArrayObjectPtr& vao)
 			:operation_type_(operation_type)
 			, vao_(vao)
 		{
@@ -32,10 +33,10 @@ namespace aurora
 		}
 
 		OperationType operation_type() const { return operation_type_; }
-		const VertexArrayObject& vao() const { return vao_; }
+		const VertexArrayObjectPtr& vao() const { return vao_; }
 	private:
 		OperationType operation_type_;
-		VertexArrayObject vao_;
+		VertexArrayObjectPtr vao_;
 	};
 }
 

@@ -44,13 +44,15 @@ namespace aurora
 		}
 
 		template<typename T>
-		void AddComponent()
+		std::shared_ptr<T> AddComponent()
 		{
 			auto game_object = game_object_wake_ptr_.lock();
 			if (game_object)
 			{
 				return game_object->AddComponent<T>();
 			}
+
+			return nullptr;
 		}
 
 		/*

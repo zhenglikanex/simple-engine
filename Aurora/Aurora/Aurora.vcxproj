@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2DAF2D1C-1416-4976-91A9-F36C970CAC71}</ProjectGuid>
     <RootNamespace>Aurora</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,7 +79,7 @@
       <AdditionalIncludeDirectories>../../external/glm-0.9.9.3;../../external/assimp-3.3.1/include;../../external/GL/include;../../external/stb;../../external;src/app;src/common;src/renderer;src/context;src/platform;src/resources;src/context/component;../../external/glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Release;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/assimp-3.3.1/build/code/Debug;../../external/glfw;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -183,6 +183,7 @@
     <ClInclude Include="src\context\Light.h" />
     <ClInclude Include="src\context\LightSystem.h" />
     <ClInclude Include="src\context\MeshRenderer.h" />
+    <ClInclude Include="src\context\Plane.h" />
     <ClInclude Include="src\context\PointLight.h" />
     <ClInclude Include="src\context\RenderGroup.h" />
     <ClInclude Include="src\context\RenderGroupMap.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="src\context\DirectionalLight.cpp" />
     <ClCompile Include="src\context\Light.cpp" />
     <ClCompile Include="src\context\MeshRenderer.cpp" />
+    <ClCompile Include="src\context\Plane.cpp" />
     <ClCompile Include="src\context\PointLight.cpp" />
     <ClCompile Include="src\context\SceneNode.cpp" />
     <ClCompile Include="src\context\RenderGroup.cpp" />

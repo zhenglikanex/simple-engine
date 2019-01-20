@@ -1,6 +1,7 @@
 #ifndef VERTEX_TYPE_H
 #define VERTEX_TYPE_H
 
+#include "AuroraDef.h"
 #include "OGLSupport.h"
 
 #include <memory>
@@ -58,8 +59,8 @@ namespace aurora
 		VertexBuffer(VertexBuffer&& rhs);
 		const VertexBuffer& operator=(VertexBuffer&& rhs);
 
-		VertexBuffer(const VertexBuffer& rhs);
-		const VertexBuffer& operator=(const VertexBuffer& rhs);
+		VertexBuffer(const VertexBuffer& rhs) = delete;
+		const VertexBuffer& operator=(const VertexBuffer& rhs) = delete;
 
 		~VertexBuffer();
 
@@ -142,19 +143,19 @@ namespace aurora
 	class VertexArrayObject
 	{
 	public:
-		VertexArrayObject(const VertexBuffer& vertex_buffer,const IndexBuffer& index_buffer);
-		VertexArrayObject(const VertexArrayObject& rhs);
-		const VertexArrayObject& operator=(const VertexArrayObject& rhs);
+		VertexArrayObject(const VertexBufferPtr& vertex_buffer,const IndexBufferPtr& index_buffer);
+		VertexArrayObject(const VertexArrayObject& rhs) = delete;
+		const VertexArrayObject& operator=(const VertexArrayObject& rhs) = delete;
 
 		~VertexArrayObject();
 
 		GLuint id() const { return id_; }
-		const VertexBuffer& vertex_buffer() const { return vertex_buffer_; }
-		const IndexBuffer& index_buffer() const { return index_buffer_; }
+		const VertexBufferPtr& vertex_buffer() const { return vertex_buffer_; }
+		const IndexBufferPtr& index_buffer() const { return index_buffer_; }
 	private:
 		GLuint id_;
-		VertexBuffer vertex_buffer_;
-		IndexBuffer index_buffer_;
+		VertexBufferPtr vertex_buffer_;
+		IndexBufferPtr index_buffer_;
 	};
 }
 

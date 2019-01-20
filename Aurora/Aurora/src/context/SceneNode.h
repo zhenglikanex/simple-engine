@@ -98,6 +98,20 @@ namespace aurora
 			UpdateTransformMatrix();
 		}
 		const glm::vec3& scale() const { return scale_; }
+		
+		void set_rotate(const glm::vec3& rotate)
+		{
+			if (rotate == rotate_)
+			{
+				return;
+			}
+
+			rotate_ = rotate;
+
+			need_update_matrix_ = true;
+			UpdateTransformMatrix();
+		}
+		const glm::vec3& rotate() const { return rotate_; }
 
 		const glm::mat4x4& transform_matrix() const { return transform_matrix_; }
 	private:
@@ -108,6 +122,7 @@ namespace aurora
 		glm::vec3 position_;
 		glm::vec3 local_position_;
 		glm::vec3 scale_;
+		glm::vec3 rotate_;
 		bool need_update_matrix_;
 		glm::mat4x4 transform_matrix_;
 		GameObjectWeakPtr parent_;

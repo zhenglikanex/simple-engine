@@ -30,7 +30,7 @@ namespace aurora
 			return;
 		}
 
-		auto cameras = Context::GetInstance()->scene_manager().cameras();
+		auto cameras = Context::GetInstance()->scene_manager()->cameras();
 		for (auto& camera : cameras)
 		{
 			// 判断layer对摄像机是否可见

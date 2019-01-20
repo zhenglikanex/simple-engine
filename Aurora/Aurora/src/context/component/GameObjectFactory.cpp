@@ -6,6 +6,7 @@
 #include "MeshRenderer.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "Plane.h"
 
 namespace aurora
 {
@@ -16,6 +17,7 @@ namespace aurora
 	const std::string GameObjectFactory::s_kMeshGameObject = "MeshGameObject";
 	const std::string GameObjectFactory::s_kPointLight = "PointLightGameObject";
 	const std::string GameObjectFactory::s_kDirectionalLight = "DirectionalLight";
+	const std::string GameObjectFactory::s_kPlane = "s_kPlane";
 
 	GameObjectFactory::GameObjectFactory()
 	{
@@ -55,6 +57,12 @@ namespace aurora
 		directional_light->AddComponent<SceneNode>();
 		directional_light->AddComponent<DirectionalLight>();
 		RegisterPerfab(s_kDirectionalLight, std::move(directional_light));
+
+		auto plane = MakeGameObjectPtr();
+		plane->AddComponent<SceneNode>();
+		plane->AddComponent<MeshRenderer>();
+		plane->AddComponent<Plane>();
+		RegisterPerfab(s_kPlane, std::move(plane));
 
 		return true;
 	}

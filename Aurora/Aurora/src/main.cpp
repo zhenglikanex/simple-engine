@@ -16,6 +16,8 @@
 #include "Context.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "SubMesh.h"
+#include "Texture.h"
 
 using namespace aurora;
 
@@ -58,29 +60,43 @@ public:
 		auto mesh = LoadMesh("model/nanosuit.obj");
 
 		auto game_object = CREATE_GAMEOBJECT(GameObjectFactory::s_kMeshGameObject);
+		game_object->set_name("nanosuit");
 		game_object->GetComponent<MeshRenderer>()->set_mesh(mesh);
-		game_object->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -20));
+		game_object->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -10));
 		game_object->GetComponent<SceneNode>()->set_scale(glm::vec3(0.5, 0.5, 0.5));
 
-		Context::GetInstance()->scene_manager().AddToRootNode(game_object);
+		Context::GetInstance()->scene_manager()->AddToRootNode(game_object);
 
 		auto camera_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kCameraGameObject);
-		Context::GetInstance()->scene_manager().AddToRootNode(camera_obj);
+		Context::GetInstance()->scene_manager()->AddToRootNode(camera_obj);
 
 		auto dl_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kDirectionalLight);
 		dl_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, 10));
-		Context::GetInstance()->scene_manager().AddToRootNode(dl_obj);
+		dl_obj->GetComponent<DirectionalLight>()->set_color(glm::vec3(0.5f, 0.0f, 0.0f));
+		Context::GetInstance()->scene_manager()->AddToRootNode(dl_obj);
 
+		auto plane = CREATE_GAMEOBJECT(GameObjectFactory::s_kPlane);
+		plane->set_name("plane");
+		plane->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -10));
+		plane->GetComponent<SceneNode>()->set_scale(glm::vec3(20));
+		plane->GetComponent<SceneNode>()->set_rotate(glm::vec3(50, 0, 0));
+		Context::GetInstance()->scene_manager()->AddToRootNode(plane);
 
-		//camera_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, 80));
+		auto material = plane->GetComponent<MeshRenderer>()->mesh()->GetSubMesh(0)->material_ptr();
+		auto texture = LoadTexture2D("model/timg.jpg");
+		material->AttachTexture("tex_diffuse",texture);
+		
 
-		//auto point_light_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kPointLight);
-		//Context::GetInstance()->scene_manager().AddToRootNode(point_light_obj);
-		//
-		//point_light_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(5, 0, 0));
+		camera_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, 20));
 
-		//auto point_light = point_light_obj->GetComponent<PointLight>();
-		//point_light->set_color(glm::vec3(1.0f, 0.0f, 0.0f));
+		/*auto point_light_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kPointLight);
+		Context::GetInstance()->scene_manager()->AddToRootNode(point_light_obj);
+		
+		point_light_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, 10));
+
+		auto point_light = point_light_obj->GetComponent<PointLight>();
+		point_light->set_color(glm::vec3(1.0f, 0.0f, 0.0f));
+		point_light->set_intensity(2.0f);*/
 
 		return true;
 	}

@@ -7,6 +7,7 @@ namespace aurora
 {
 	DirectionalLight::DirectionalLight()
 		: Light(LightType::kDirectionalLight)
+		,dir_(0,-1.0,0.0)
 	{
 
 	}
@@ -20,6 +21,7 @@ namespace aurora
 	{
 		DirectionalLightParameter light_param;
 		light_param.position = GetComponent<SceneNode>()->position();
+		light_param.directional = dir_;
 		light_param.color = color_;
 		light_param.intensity = intensity_;
 
@@ -38,10 +40,12 @@ namespace aurora
 
 	void DirectionalLight::Copy(const IComponentPtr& component)
 	{
-		auto point_light = std::dynamic_pointer_cast<DirectionalLight>(component);
-		if (point_light)
+		auto dir_light = std::dynamic_pointer_cast<DirectionalLight>(component);
+		if (dir_light)
 		{
-			Light::Copy(point_light);
+			Light::Copy(dir_light);
+
+			dir_light->dir_ = dir_;
 		}
 	}
 }

@@ -42,6 +42,18 @@ namespace aurora
 	using ContextPtr = std::shared_ptr<Context>;
 	MAKE_SHARED_PTR(Context);
 
+	class VertexBuffer;
+	using VertexBufferPtr = std::shared_ptr<VertexBuffer>;
+	MAKE_SHARED_PTR(VertexBuffer);
+
+	class IndexBuffer;
+	using IndexBufferPtr = std::shared_ptr<IndexBuffer>;
+	MAKE_SHARED_PTR(IndexBuffer);
+
+	class VertexArrayObject;
+	using VertexArrayObjectPtr = std::shared_ptr<VertexArrayObject>;
+	MAKE_SHARED_PTR(VertexArrayObject);
+
 	class Mesh;
 	using MeshPtr = std::shared_ptr<Mesh>;
 	using MeshWeakPtr = std::weak_ptr<Mesh>;
@@ -108,6 +120,10 @@ namespace aurora
 	using IComponentPtr = std::shared_ptr<IComponent>;
 	MAKE_SHARED_PTR(IComponent);
 
+	class SceneManager;
+	using SceneManagerPtr = std::shared_ptr<SceneManager>;
+	MAKE_SHARED_PTR(SceneManager);
+
 	class GameObject;
 	using GameObjectPtr = std::shared_ptr<GameObject>;
 	using GameObjectWeakPtr = std::weak_ptr<GameObject>;
@@ -142,6 +158,11 @@ namespace aurora
 	using DirectionalLightPtr = std::shared_ptr<DirectionalLight>;
 	using DirectionalLightWeakPtr = std::weak_ptr<DirectionalLight>;
 	MAKE_SHARED_PTR(DirectionalLight);
+
+	class Plane;
+	using PlanePtr = std::shared_ptr<Plane>;
+	using PlaneWeakPtr = std::weak_ptr<Plane>;
+	MAKE_SHARED_PTR(Plane);
 }
 
 #endif

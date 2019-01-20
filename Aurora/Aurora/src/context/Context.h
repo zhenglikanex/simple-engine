@@ -18,12 +18,12 @@ namespace aurora
 
 		void Update();
 
-		SceneManager& scene_manager() { return scene_manager_; }
+		const SceneManagerPtr& scene_manager() const { return scene_manager_; }
 	private:
 		bool quit_;
 		ConfigPtr config_ptr_;
 		OGLRendererPtr ogl_renderer_;
-		SceneManager scene_manager_;
+		SceneManagerPtr scene_manager_;
 	};
 }
 
