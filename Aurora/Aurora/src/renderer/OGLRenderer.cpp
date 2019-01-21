@@ -12,7 +12,7 @@
 #include "FrameBufferObject.h"
 #include "stb_image.h"
 
-float sreen_quad[] = 
+float screen_quad[] = 
 {
 	-1.0f,-1.0f,0.0f, 0.0f,0.0f,
 	-1.0f,1.0f,0.0f, 0.0f,1.0f,
@@ -68,6 +68,21 @@ namespace aurora
 		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);	
 		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
 
+		glGenVertexArrays(1, &vao_);
+		glGenBuffers(1, &vbo_);
+
+		glBindVertexArray(vao_);
+
+		glBindBuffer(GL_ARRAY_BUFFER,vbo_);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(screen_quad), screen_quad, GL_STATIC_DRAW);
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
+
+		glBindVertexArray(0);
+
+		shader_ = LoadShader("shader/fs_shadow_map.vs", "shader/fs_shadow_map.fs");
+
 		return true;
 	}
 
@@ -110,21 +125,24 @@ namespace aurora
 		
 		// 方向光阴影
 		dl_shadow_rt_->fbo()->Bind();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		
+		dl_space_matrixs_.clear();
 		
 		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
 
 		for (auto i = 0; i < directional_lights.size(); ++i)
 		{
 			auto light = directional_lights[i];
-			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f),glm::vec3(0.0f,1.0f,0.0f));
 
 			float near_plane = 1.0f, far_plane = 75.f;
 			glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
 
 			shadow_shader->CommitMat4("light_view", light_view);
 			shadow_shader->CommitMat4("projection", projection);
+
+			dl_space_matrixs_.emplace_back(projection * light_view);
 
 			for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end();++rgm_iter)
 			{
@@ -153,13 +171,24 @@ namespace aurora
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
-		//RenderShadowPass(render_group_map);
-		//ChangeViewport(0, 0, 1024, 768);
+		RenderShadowPass(render_group_map);
+		ChangeViewport(0, 0, window_width_, window_height_);
 
-		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		shader_->Bind();
+		
+		shader_->CommitInt("tex_shadow", 0);
+		
+		dl_shadow_rt_->depth_texture()->Bind();
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		shader_->UnBind();
+
+		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}
+		}*/
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
@@ -198,10 +227,13 @@ namespace aurora
 			// 提交投影矩阵
 			shader->CommitMat4("proj_matrix", projection_matrix_);
 
+
 			// 提交灯光数据
 			auto& point_lights = LightSystem::GetInstance()->point_lights();
 			auto& directional_lights = LightSystem::GetInstance()->directional_lights();
 			auto& spot_lights = LightSystem::GetInstance()->spot_lights();
+
+			shader->CommitInt("dir_light_count", directional_lights.size());
 
 			for (auto i = 0; i < directional_lights.size(); ++i)
 			{
@@ -248,6 +280,26 @@ namespace aurora
 				sprintf_s(quadratic_name, "point_lights[%d].quadratic", i);
 				shader->CommitFloat(quadratic_name, point_lights[i].quadratic);
 			}
+
+			// 
+			auto tex_dl_shadow = dl_shadow_rt_->depth_texture();
+			if (tex_dl_shadow)
+			{
+				tex_dl_shadow->Bind(5);		//TODO：应该给每个贴图类型指定通道,比如阴影贴图应该有固定的通道,这样才不会占用
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+				GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+				shader->CommitInt("tex_dl_shadow", 5);
+			}
+
+			for (uint32_t i = 0; i < dl_space_matrixs_.size(); ++i)
+			{
+				char name[256];
+				sprintf_s(name, "dl_space_matrixs[%d]", i);
+				shader->CommitMat4(name, dl_space_matrixs_[i]);
+			}
+
 
 			// 提交顶点数据
 			DrawRenderOperation(render_object.GetRenderOperation());

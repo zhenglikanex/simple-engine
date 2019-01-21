@@ -72,12 +72,12 @@ public:
 
 		auto dl_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kDirectionalLight);
 		dl_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, 10));
-		dl_obj->GetComponent<DirectionalLight>()->set_color(glm::vec3(0.5f, 0.0f, 0.0f));
+		dl_obj->GetComponent<DirectionalLight>()->set_color(glm::vec3(1.f, 1.0f, 1.0f));
 		Context::GetInstance()->scene_manager()->AddToRootNode(dl_obj);
 
 		auto plane = CREATE_GAMEOBJECT(GameObjectFactory::s_kPlane);
 		plane->set_name("plane");
-		plane->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -10));
+		plane->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, -10));
 		plane->GetComponent<SceneNode>()->set_scale(glm::vec3(20));
 		plane->GetComponent<SceneNode>()->set_rotate(glm::vec3(50, 0, 0));
 		Context::GetInstance()->scene_manager()->AddToRootNode(plane);

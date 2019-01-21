@@ -1,6 +1,8 @@
 #ifndef OGLRENDERER_H_
 #define OGLRENDERER_H_
 
+#include <vector>
+
 #include "AuroraDef.h"
 #include "OGLDeviceContext.h"
 #include "RenderGroupMap.h"
@@ -55,11 +57,15 @@ namespace aurora
 		GLuint vbo_;	// 顶点缓存
 		GLuint ebo_;	// 顶点索引缓存
 
+		ShaderPtr shader_;
+
 		glm::vec3 camera_position_;
 		glm::mat4 camera_matrix_;
 		glm::mat4 projection_matrix_;
 
 		RenderTexturePtr dl_shadow_rt_;		// 方向光的阴影
+		std::vector<glm::mat4> dl_space_matrixs_;
+
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
 	};
 }
