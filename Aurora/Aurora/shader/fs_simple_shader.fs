@@ -70,14 +70,35 @@ float ShadowCalculation(vec4 frag_dir_light_space)
 	// 变换到纹理坐标范围[0,1]
 	proj_coords = proj_coords * 0.5 + 0.5;
 	
-	// 获得最近的纹理
-	float closest_depth = texture(tex_dl_shadow,proj_coords.xy).r;
-	
 	// 当前片元在灯光空间下的深度
 	float current_depth = proj_coords.z;
 	
+	float bias = 0.005;
+	float shadow = 0.0;
+	vec2 texel_size = 1.0 / textureSize(tex_dl_shadow,0);
+	
+	for(int x = 0;x<=0;++x)
+	{
+		for(int y = 0;y <= 0;++y)
+		{
+			float pfc_depth = texture(tex_dl_shadow,proj_coords.xy + vec2(x,y) * texel_size).r;
+			shadow += current_depth - bias > pfc_depth ? 1.0 : 0.0;
+		}
+	}
+	
+	shadow /= 1.0;
+	
+	return shadow;
+	
+	/*
+	// 获得最近的纹理
+	float closest_depth = texture(tex_dl_shadow,proj_coords.xy).r;
+		
 	// 比较当前深度和最近的深度，如果在最近的深度后面，则在阴影下
-	return current_depth > closest_depth ? 1.0 : 0.0;
+	float bias = 0.005;
+	//float bias = max(0.05 * (1.0 - dot(normalize(frag_normal), light_dir)), 0.005);
+	return current_depth - bias > closest_depth ? 1.0 : 0.0;
+	*/
 }
 
 void main()
