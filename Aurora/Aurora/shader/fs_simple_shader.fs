@@ -92,7 +92,7 @@ void main()
 			break;
 		}
 	}
-
+	
 	int point_light_count = 1;
 
 	vec3 frag_color = vec3(texture(tex_diffuse,frag_tex_coord));

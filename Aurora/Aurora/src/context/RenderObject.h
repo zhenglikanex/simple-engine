@@ -12,6 +12,8 @@ namespace aurora
 	class RenderObject
 	{
 	public:
+		bool visible_;
+
 		RenderObject(const glm::mat4& model_matrix,const MaterialPtr material,const RenderOperation& render_operation);
 		~RenderObject();
 

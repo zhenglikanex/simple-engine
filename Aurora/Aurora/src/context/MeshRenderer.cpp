@@ -30,6 +30,12 @@ namespace aurora
 			return;
 		}
 
+		bool visible = true;
+		if (GetGameObject()->name() == "nanosuit")
+		{
+			visible = false;
+		}
+
 		auto cameras = Context::GetInstance()->scene_manager()->cameras();
 		for (auto& camera : cameras)
 		{
@@ -43,7 +49,7 @@ namespace aurora
 					{
 						auto scene_node = GetComponent<SceneNode>();
 						RenderObject render_object(scene_node->GetWorldMatrix(),submesh->material_ptr(), submesh->GetRenderOperation());
-
+						render_object.visible_ = visible;
 						auto render_queue_iter = iter->second.get(submesh->material_ptr());
 						render_queue_iter->second.push_back(render_object);
 					}

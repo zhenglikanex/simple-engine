@@ -63,7 +63,7 @@ public:
 		game_object->set_name("nanosuit");
 		game_object->GetComponent<MeshRenderer>()->set_mesh(mesh);
 		game_object->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, -10));
-		game_object->GetComponent<SceneNode>()->set_scale(glm::vec3(0.5, 0.5, 0.5));
+		game_object->GetComponent<SceneNode>()->set_scale(glm::vec3(2.0, 2.0, 2.0));
 
 		Context::GetInstance()->scene_manager()->AddToRootNode(game_object);
 

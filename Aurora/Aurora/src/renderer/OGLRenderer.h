@@ -67,6 +67,7 @@ namespace aurora
 		std::vector<glm::mat4> dl_space_matrixs_;
 
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
+		TexturePtr texture_;
 	};
 }
 

@@ -11,8 +11,9 @@
 #include "RenderTexture.h"
 #include "FrameBufferObject.h"
 #include "stb_image.h"
+#include "Texture.h"
 
-float screen_quad[] = 
+float screen_quad[] =
 {
 	-1.0f,-1.0f,0.0f, 0.0f,0.0f,
 	-1.0f,1.0f,0.0f, 0.0f,1.0f,
@@ -66,7 +67,7 @@ namespace aurora
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 768, 0, true, false);	
-		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		//pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
 
 		glGenVertexArrays(1, &vao_);
 		glGenBuffers(1, &vbo_);
@@ -74,14 +75,17 @@ namespace aurora
 		glBindVertexArray(vao_);
 
 		glBindBuffer(GL_ARRAY_BUFFER,vbo_);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(screen_quad), screen_quad, GL_STATIC_DRAW);
-		
+		glBufferData(GL_ARRAY_BUFFER,sizeof(screen_quad), screen_quad, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
 
 		glBindVertexArray(0);
 
-		shader_ = LoadShader("shader/fs_shadow_map.vs", "shader/fs_shadow_map.fs");
+		shader_ = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
+		texture_ = LoadTexture2D("1003.jpg");
 
 		return true;
 	}
@@ -174,21 +178,22 @@ namespace aurora
 		RenderShadowPass(render_group_map);
 		ChangeViewport(0, 0, window_width_, window_height_);
 
-		shader_->Bind();
-		
+		/*shader_->Bind();
+
 		shader_->CommitInt("tex_shadow", 0);
-		
-		dl_shadow_rt_->depth_texture()->Bind();
+
+		dl_shadow_rt_->depth_texture()->Bind(0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
-		shader_->UnBind();
+		CHECK_GL_ERROR_DEBUG();
+		shader_->UnBind();*/
 
-		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}*/
+		}
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
@@ -204,7 +209,10 @@ namespace aurora
 		//auto material = render_queue.materail();
 		for (auto iter = render_queue.begin(); iter != render_queue.end(); ++iter)
 		{
-			StartRenderObject(*iter);
+			if (iter->visible_)
+			{
+				StartRenderObject(*iter);
+			}
 		}
 	}
 

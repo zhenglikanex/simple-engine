@@ -1,4 +1,8 @@
 #version 430
+
+#define MAX_DIRECTIONAL_LIGHT_COUNT 5
+#define MAX_POINT_LIGHT_COUNT 10
+
 layout(location = 0) in vec3 pos;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 tex_coord;
@@ -9,13 +13,10 @@ uniform mat4 model_matrix;
 uniform mat4 camera_matrix;
 uniform mat4 proj_matrix;
 
-#define MAX_DIRECTIONAL_LIGHT_COUNT 5
-#define MAX_POINT_LIGHT_COUNT 10
-
 uniform int dir_light_count;
 
 uniform mat4 dl_space_matrixs[MAX_DIRECTIONAL_LIGHT_COUNT];
-uniform mat4 pl_view_matrix[MAX_POINT_LIGHT_COUNT];
+uniform mat4 pl_view_matrixs[MAX_POINT_LIGHT_COUNT];
 
 out vec2 frag_tex_coord;
 out vec3 frag_normal;
@@ -29,8 +30,8 @@ void main()
 	frag_normal = normal;
 	frag_position = vec3(model_matrix * vec4(pos.x,pos.y,pos.z,1.0));
 	
-	for(int i = 0;i < dir_light_count;++i)
+	for(int i = 0;i < 1;++i)
 	{
-		dl_space_pos[i] = dl_space_matrixs[i] * vec4(pos,1.0);
+		dl_space_pos[i] = dl_space_matrixs[i] * vec4(frag_position,1.0);
 	}
 }
