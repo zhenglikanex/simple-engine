@@ -46,23 +46,23 @@ namespace aurora
 	/*-------------------------------------------------------*/
 
 	TextureCubeLoadDesc::TextureCubeLoadDesc(
+		const std::string& right,
+		const std::string& left,
 		const std::string& top,
 		const std::string& bottom,
-		const std::string& left,
-		const std::string& right,
 		const std::string& front,
 		const std::string& back)
-		: files_({top,bottom,left,right,front,back})
+		: files_({right,left,top,bottom,front,back})
 	{
-		name_ = top + bottom + left + right + front + back;
+		name_ = right + left + top + bottom + front + back;
 	}
 
 	TextureCubeLoadDesc::TextureCubeLoadDesc(const std::string& floder, const std::string& ext)
 		: TextureCubeLoadDesc(
+			floder + "/right" + ext,
+			floder + "/left" + ext,
 			floder + "/top" + ext,
 			floder + "/bottom" + ext,
-			floder + "/left" + ext,
-			floder + "/right" + ext,
 			floder + "/front" + ext,
 			floder + "/back" + ext
 		)

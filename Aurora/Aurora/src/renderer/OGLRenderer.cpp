@@ -67,7 +67,8 @@ namespace aurora
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 8192,8192, 0, true, false);	
-		//pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 512, 512, 0, true, false);
+		CHECK_GL_ERROR_DEBUG();
 
 		glGenVertexArrays(1, &vao_);
 		glGenBuffers(1, &vbo_);
@@ -138,7 +139,7 @@ namespace aurora
 		for (auto i = 0; i < directional_lights.size(); ++i)
 		{
 			auto light = directional_lights[i];
-			glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0f),glm::vec3(0.0f,1.0f,0.0f));
+			glm::mat4 light_view = glm::lookAt(-light.directional, glm::vec3(0.0f),glm::vec3(0.0f,1.0f,0.0f));
 
 			float near_plane = 1.0f, far_plane = 75.f;
 			glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);

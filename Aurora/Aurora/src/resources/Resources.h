@@ -22,6 +22,7 @@ namespace aurora
 		static MaterialPtr s_kNormalDiffuseSpecularMtl;
 
 		static ShaderPtr s_kShadowShader;
+		static ShaderPtr s_kPointShadowShader;
 	public:
 		using NameByResourceMap = std::unordered_map<std::string, std::shared_ptr<void>>;
 
@@ -57,6 +58,7 @@ namespace aurora
 	TextureCubePtr LoadTextureCube(const std::string& top,const std::string& bottom,const std::string& left,const std::string& right,const std::string& front,const std::string& back);
 	TextureCubePtr LoadTextureCube(const std::string& floder, const std::string& ext);
 	ShaderPtr LoadShader(const std::string& vs_file, const std::string& ps_file);
+	ShaderPtr LoadShader(const std::string& vs_file, const std::string& gs_file, const std::string& ps_file);
 	MaterialPtr LoadMaterial(const std::string& name);
 	MeshPtr LoadMesh(const std::string& name);
 }

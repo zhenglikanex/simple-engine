@@ -21,10 +21,10 @@ namespace aurora
 	{
 	public:
 		TextureCubeLoadDesc(
+			const std::string& right,
+			const std::string& left,
 			const std::string& top,
 			const std::string& bottom,
-			const std::string& left,
-			const std::string& right,
 			const std::string& front,
 			const std::string& back);
 		TextureCubeLoadDesc(const std::string& floder,const std::string& ext);

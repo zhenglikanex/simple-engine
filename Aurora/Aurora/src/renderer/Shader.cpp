@@ -14,6 +14,14 @@ namespace aurora
 		Load(vs_file, fs_file);
 	}
 
+	Shader::Shader(const std::string& vs_file, const std::string gs_file, const std::string& fs_file)
+		:vs_file_(vs_file)
+		,gs_file_(gs_file)
+		,ps_file_(fs_file)
+	{
+		Load(vs_file_, gs_file_, ps_file_);
+	}
+
 	Shader::~Shader()
 	{
 		glDeleteProgram(id_);
@@ -190,6 +198,14 @@ namespace aurora
 		CreateProgram(vs_shader, fs_shader);
 	}
 
+	void Shader::Load(const std::string& vs_file, const std::string& gs_file, const std::string& fs_file)
+	{
+		auto vs_shader = CreateShader(GL_VERTEX_SHADER, vs_file);
+		auto gs_shader = CreateShader(GL_GEOMETRY_SHADER, gs_file_);
+		auto fs_shader = CreateShader(GL_FRAGMENT_SHADER, fs_file);
+		CreateProgram(vs_shader, gs_shader, fs_shader);
+	}
+
 	GLuint Shader::CreateShader(GLenum type,const std::string& file)
 	{
 		auto file_identifer = FileHelper::GetInstance()->OpenFileIdentifer(file);
@@ -216,6 +232,10 @@ namespace aurora
 			{
 				shader_type = "VertexShader";
 			}
+			else if (type == GL_GEOMETRY_SHADER)
+			{
+				shader_type = "GeometryShader";
+			}
 			else if (type == GL_FRAGMENT_SHADER)
 			{
 				shader_type = "FragmentShader";
@@ -228,7 +248,7 @@ namespace aurora
 			
 			error_info[length + 1] = '\0';
 
-			LOG_ERROR() << file_identifer.res_name() << shader_type << "±àÒë´íÎó : " << error_info << LOG_END();
+			LOG_ERROR() << file_identifer.res_name() << shader_type << "±àÒë´íÎó : \n" << error_info << LOG_END();
 		}
 
 		return id;
@@ -270,6 +290,51 @@ namespace aurora
 		}
 		
 		glDeleteShader(vs_shader);
+		glDeleteShader(fs_shader);
+	}
+
+	void Shader::CreateProgram(GLint vs_shader, GLint gs_shader, GLint fs_shader)
+	{
+		id_ = glCreateProgram();
+
+		if (vs_shader > 0)
+		{
+			glAttachShader(id_, vs_shader);
+		}
+
+		if (gs_shader > 0)
+		{
+			glAttachShader(id_, gs_shader);
+		}
+
+		if (fs_shader > 0)
+		{
+			glAttachShader(id_, fs_shader);
+		}
+
+		glLinkProgram(id_);
+
+		GLint status;
+		glGetProgramiv(id_, GL_LINK_STATUS, &status);
+		if (!status)
+		{
+			const GLsizei kMaxCount = 256;
+			GLchar error_info[kMaxCount + 1] = { 0 };
+			GLsizei length;
+
+			glGetProgramInfoLog(id_, kMaxCount, &length, error_info);
+
+			error_info[length + 1] = '\0';
+
+			LOG_ERROR() << "±àÒë³ö´í : \n"
+				<< "vs_file: " << vs_file_ << "\n"
+				<< "gs_file: " << gs_file_ << "\n"
+				<< "ps_file: " << ps_file_ << "\n"
+				<< "error:" << error_info << LOG_END();
+		}
+
+		glDeleteShader(vs_shader);
+		glDeleteShader(gs_shader);
 		glDeleteShader(fs_shader);
 	}
 

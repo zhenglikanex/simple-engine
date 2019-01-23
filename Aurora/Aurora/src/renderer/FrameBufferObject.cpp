@@ -28,22 +28,51 @@ namespace aurora
 	void TextureBufferAttachment::AttachToFBO(GLuint fbo,uint32_t index)
 	{
 		texture_->Bind();
-		switch (type_)
+
+		if (texture_->type() == GL_TEXTURE_2D)
 		{
-		case AttachmentType::kColor:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index,texture_->type(),texture_->id(),0);
-			break;
-		case AttachmentType::kDepth:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_->type(), texture_->id(),0);
-			break;
-		case AttachmentType::kStencil:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,texture_->type(), texture_->id(),0);
-			break;
-		case AttachmentType::kDepthStencil:
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_->type(), texture_->id(),0);
-			break;
-		default:
-			break;
+			switch (type_)
+			{
+			case AttachmentType::kColor:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, texture_->type(), texture_->id(), 0);
+				break;
+			case AttachmentType::kDepth:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture_->type(), texture_->id(), 0);
+				break;
+			case AttachmentType::kStencil:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, texture_->type(), texture_->id(), 0);
+				break;
+			case AttachmentType::kDepthStencil:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_->type(), texture_->id(), 0);
+				break;
+			default:
+				break;
+			}
+		}
+		else if (texture_->type() == GL_TEXTURE_CUBE_MAP)
+		{
+			for (int i = 0; i < 6; ++i)
+			{
+				GLint face = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
+
+				switch (type_)
+				{
+				case AttachmentType::kColor:
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, face, texture_->id(), 0);
+					break;
+				case AttachmentType::kDepth:
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, face, texture_->id(), 0);
+					break;
+				case AttachmentType::kStencil:
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, face, texture_->id(), 0);
+					break;
+				case AttachmentType::kDepthStencil:
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, face, texture_->id(), 0);
+					break;
+				default:
+					break;
+				}
+			}
 		}
 	}
 

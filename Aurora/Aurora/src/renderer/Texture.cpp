@@ -145,6 +145,8 @@ namespace aurora
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format_info.internal_format_, width_, height_, 0, format_info_.format_, format_info_.type_,datas[i]);
 		}
+
+		CHECK_GL_ERROR_DEBUG();
 	}
 
 	void TextureCube::UpdateData(GLenum face, const void* data, GLint mimap_level, GLint offset_x, GLint offset_y, GLsizei width, GLsizei height)

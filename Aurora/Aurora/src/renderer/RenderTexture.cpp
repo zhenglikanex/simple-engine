@@ -136,8 +136,7 @@ namespace aurora
 	RenderTextureCube::RenderTextureCube(TextureFormatType type, uint32_t width, uint32_t height, uint32_t color_texture_count, bool enable_depth_stencil)
 		: BaseRenderTexture(type, width, height, color_texture_count,enable_depth_stencil, std::bind(&RenderTextureCube::CreateTexture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 	{
-
-		
+		CHECK_GL_ERROR_DEBUG();
 	}
 
 	RenderTextureCube::RenderTextureCube(TextureFormatType type, uint32_t width, uint32_t height, uint32_t color_texture_count, bool enable_depth, bool enable_stencil)

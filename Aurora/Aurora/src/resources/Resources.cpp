@@ -17,6 +17,7 @@ namespace aurora
 	MaterialPtr Resources::s_kNormalDiffuseSpecularMtl = nullptr;
 
 	ShaderPtr Resources::s_kShadowShader = nullptr;
+	ShaderPtr Resources::s_kPointShadowShader = nullptr;
 
 	void Resources::CreateDefaultMaterial()
 	{
@@ -35,6 +36,7 @@ namespace aurora
 	void Resources::CreateDefaultShader()
 	{
 		Resources::s_kShadowShader = LoadShader("shader/vs_shadow.vs", "shader/fs_shadow.fs");
+		Resources::s_kPointShadowShader = LoadShader("shader/vs_point_light_shadow.vs", "shader/gs_point_light_shadow.gs", "shader/fs_point_light_shadow.fs");
 	}
 
 	std::shared_ptr<void> Resources::FindResource(const std::string& name)
@@ -74,6 +76,12 @@ namespace aurora
 	ShaderPtr LoadShader(const std::string& vs_file, const std::string& ps_file)
 	{
 		auto res_load_desc = ShaderLoadDesc(vs_file, ps_file);
+		return std::static_pointer_cast<Shader>(Resources::GetInstance()->LoadResource<Shader>(res_load_desc));
+	}
+
+	ShaderPtr LoadShader(const std::string& vs_file, const std::string& gs_file, const std::string& ps_file)
+	{
+		auto res_load_desc = ShaderLoadDesc(vs_file,gs_file,ps_file);
 		return std::static_pointer_cast<Shader>(Resources::GetInstance()->LoadResource<Shader>(res_load_desc));
 	}
 

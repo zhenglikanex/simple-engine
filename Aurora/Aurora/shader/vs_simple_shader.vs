@@ -30,7 +30,7 @@ void main()
 	frag_normal = normal;
 	frag_position = vec3(model_matrix * vec4(pos.x,pos.y,pos.z,1.0));
 	
-	for(int i = 0;i < 1;++i)
+	for(int i = 0;i < dir_light_count;++i)
 	{
 		dl_space_pos[i] = dl_space_matrixs[i] * vec4(frag_position,1.0);
 	}

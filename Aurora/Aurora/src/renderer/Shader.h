@@ -23,6 +23,7 @@ namespace aurora
 		using NameByUniformMap = std::unordered_map<std::string,UnkownValue>;
 
 		Shader(const std::string& vs_file,const std::string& fs_file);
+		Shader(const std::string& vs_file, const std::string gs_file, const std::string& fs_file);
 		~Shader();
 
 		const GLuint id() { return id_; }
@@ -47,13 +48,18 @@ namespace aurora
 		void UnBind();
 	private:
 		void Load(const std::string& vs_file, const std::string& fs_file);
+		void Load(const std::string& vs_file, const std::string& gs_file, const std::string& fs_file);
+		
 		GLuint CreateShader(GLenum type,const std::string& file);
-		void CreateProgram(GLint vs_shader,GLint fs_shader);
 
+		void CreateProgram(GLint vs_shader,GLint fs_shader);
+		void CreateProgram(GLint vs_shader, GLint gs_shader, GLint fs_shader);
+		
 		bool UpdateLocalValue(const std::string& name, const void* memory, size_t size);
 	private:
 		GLuint id_;
 		std::string vs_file_;
+		std::string gs_file_;
 		std::string ps_file_;
 		NameByUniformMap name_by_uniform_map_;
 	};

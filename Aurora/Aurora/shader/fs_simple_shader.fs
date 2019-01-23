@@ -105,7 +105,7 @@ void main()
 {
 	// 判断是否在阴影中
 	float shadow = 0.0;
-	for(int i = 0;i < dir_light_count;i++)
+	for(int i = 0;i < 1;i++)
 	{
 		shadow = ShadowCalculation(dl_space_pos[i]);
 		if(shadow > 0.0)
