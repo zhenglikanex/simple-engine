@@ -121,46 +121,44 @@ namespace aurora
 		auto& spot_lights = LightSystem::GetInstance()->spot_lights();
 
 		auto shadow_shader = Resources::s_kShadowShader;
-		if (!shadow_shader)
+		if (shadow_shader)
 		{
-			return;
-		}
+			shadow_shader->Bind();
 
-		shadow_shader->Bind();
-		
-		// 方向光阴影
-		dl_shadow_rt_->fbo()->Bind();
-		glClear(GL_DEPTH_BUFFER_BIT);
-		
-		dl_space_matrixs_.clear();
-		
-		ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
+			// 方向光阴影
+			dl_shadow_rt_->fbo()->Bind();
+			glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (auto i = 0; i < directional_lights.size(); ++i)
-		{
-			auto light = directional_lights[i];
-			glm::mat4 light_view = glm::lookAt(-light.directional, glm::vec3(0.0f),glm::vec3(0.0f,1.0f,0.0f));
+			dl_space_matrixs_.clear();
 
-			float near_plane = 1.0f, far_plane = 75.f;
-			glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
+			ChangeViewport(0, 0, dl_shadow_rt_->width(), dl_shadow_rt_->height());
 
-			shadow_shader->CommitMat4("light_view", light_view);
-			shadow_shader->CommitMat4("projection", projection);
-
-			dl_space_matrixs_.emplace_back(projection * light_view);
-
-			for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end();++rgm_iter)
+			for (auto i = 0; i < directional_lights.size(); ++i)
 			{
-				auto render_group = rgm_iter->second;
-				for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
-				{
-					auto render_queue = rg_iter->second;
-					for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
-					{
-						auto render_object = *rq_iter;
-						shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
+				auto light = directional_lights[i];
+				glm::mat4 light_view = glm::lookAt(-light.directional, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-						DrawRenderOperation(render_object.GetRenderOperation());
+				float near_plane = 1.0f, far_plane = 75.f;
+				glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
+
+				shadow_shader->CommitMat4("light_view", light_view);
+				shadow_shader->CommitMat4("projection", projection);
+
+				dl_space_matrixs_.emplace_back(projection * light_view);
+
+				for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end(); ++rgm_iter)
+				{
+					auto render_group = rgm_iter->second;
+					for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
+					{
+						auto render_queue = rg_iter->second;
+						for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
+						{
+							auto render_object = *rq_iter;
+							shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
+
+							DrawRenderOperation(render_object.GetRenderOperation());
+						}
 					}
 				}
 			}
@@ -168,10 +166,27 @@ namespace aurora
 
 		dl_shadow_rt_->fbo()->UnBind();
 
-		// 点光源阴影
-		/*pl_shadow_rt_->fbo()->Bind();
-		ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
-		pl_shadow_rt_->fbo()->UnBind();*/
+		auto point_shadow_shader = Resources::s_kPointShadowShader;
+		if (point_shadow_shader)
+		{
+			// 点光源阴影
+			pl_shadow_rt_->fbo()->Bind();
+
+			ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
+
+			for (uint32_t i = 0; i < point_lights.size(); ++i)
+			{
+				auto light = point_lights[i];
+				glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
+
+				float near_plane = 1.0f;
+				float far_plane = 75.0f;
+				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
+				glm::
+			}
+
+			pl_shadow_rt_->fbo()->UnBind();
+		}
 	}
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
