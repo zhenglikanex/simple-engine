@@ -75,10 +75,10 @@ public:
 		dl_obj->GetComponent<DirectionalLight>()->set_dir(glm::vec3(-2, -5, -10));
 		Context::GetInstance()->scene_manager()->AddToRootNode(dl_obj);
 
-		auto dl_obj1 = CREATE_GAMEOBJECT(GameObjectFactory::s_kDirectionalLight);
+		/*auto dl_obj1 = CREATE_GAMEOBJECT(GameObjectFactory::s_kDirectionalLight);
 		dl_obj1->GetComponent<DirectionalLight>()->set_color(glm::vec3(1.f, 1.0f, 1.0f));
 		dl_obj1->GetComponent<DirectionalLight>()->set_dir(glm::vec3(2, -5, -10));
-		Context::GetInstance()->scene_manager()->AddToRootNode(dl_obj1);
+		Context::GetInstance()->scene_manager()->AddToRootNode(dl_obj1);*/
 
 		auto plane = CREATE_GAMEOBJECT(GameObjectFactory::s_kPlane);
 		plane->set_name("plane");
@@ -94,6 +94,10 @@ public:
 
 		camera_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 0, 20));
 
+		glm::vec3 pos(1.0, 2.0, 1.0);
+		auto mat = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0));
+		auto mat2 = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(0.0,1.0,0.0));
+
 		/*auto point_light_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kPointLight);
 		Context::GetInstance()->scene_manager()->AddToRootNode(point_light_obj);
 		
@@ -102,6 +106,13 @@ public:
 		auto point_light = point_light_obj->GetComponent<PointLight>();
 		point_light->set_color(glm::vec3(1.0f, 0.0f, 0.0f));
 		point_light->set_intensity(2.0f);*/
+
+		glm::vec3 front(0.0, -1.0, 0.0);
+		glm::vec3 up(0.0, 1.0, 0.0);
+		glm::vec3 right = glm::normalize(glm::cross(glm::normalize(front), up));
+		up = glm::normalize(glm::cross(up, front));
+
+		glm::mat4 m = glm::lookAt(glm::vec3(0.f), glm::vec3(0.0f, -1.0f, 0.0f), up);
 
 		return true;
 	}

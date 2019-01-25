@@ -136,7 +136,7 @@ namespace aurora
 			for (auto i = 0; i < directional_lights.size(); ++i)
 			{
 				auto light = directional_lights[i];
-				glm::mat4 light_view = glm::lookAt(-light.directional, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+				glm::mat4 light_view = glm::lookAt(-light.directional, glm::vec3(0.0f), glm::vec3(0.0,0.0,-1.0));
 
 				float near_plane = 1.0f, far_plane = 75.f;
 				glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
@@ -166,27 +166,35 @@ namespace aurora
 
 		dl_shadow_rt_->fbo()->UnBind();
 
-		auto point_shadow_shader = Resources::s_kPointShadowShader;
-		if (point_shadow_shader)
-		{
-			// 点光源阴影
-			pl_shadow_rt_->fbo()->Bind();
+		//auto point_shadow_shader = Resources::s_kPointShadowShader;
+		//if (point_shadow_shader)
+		//{
+		//	std::array<glm::mat4, 6> point_projs;
 
-			ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
+		//	// 点光源阴影
+		//	pl_shadow_rt_->fbo()->Bind();
 
-			for (uint32_t i = 0; i < point_lights.size(); ++i)
-			{
-				auto light = point_lights[i];
-				glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
+		//	ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
 
-				float near_plane = 1.0f;
-				float far_plane = 75.0f;
-				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
-				glm::
-			}
+		//	for (uint32_t i = 0; i < point_lights.size(); ++i)
+		//	{
+		//		auto light = point_lights[i];
+		//		glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
 
-			pl_shadow_rt_->fbo()->UnBind();
-		}
+		//		float near_plane = 1.0f;
+		//		float far_plane = 75.0f;
+		//		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
+		//		point_projs[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		//		point_projs[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		//		point_projs[2] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		//		point_projs[3] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		//		point_projs[4] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0));
+		//		point_projs[5] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0));
+		//		
+		//	}
+
+		//	pl_shadow_rt_->fbo()->UnBind();
+		//}
 	}
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
@@ -194,7 +202,7 @@ namespace aurora
 		RenderShadowPass(render_group_map);
 		ChangeViewport(0, 0, window_width_, window_height_);
 
-		/*shader_->Bind();
+		shader_->Bind();
 
 		shader_->CommitInt("tex_shadow", 0);
 
@@ -204,12 +212,12 @@ namespace aurora
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 		CHECK_GL_ERROR_DEBUG();
-		shader_->UnBind();*/
+		shader_->UnBind();
 
-		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}
+		}*/
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
