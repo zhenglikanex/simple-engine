@@ -166,35 +166,34 @@ namespace aurora
 
 		dl_shadow_rt_->fbo()->UnBind();
 
-		//auto point_shadow_shader = Resources::s_kPointShadowShader;
-		//if (point_shadow_shader)
-		//{
-		//	std::array<glm::mat4, 6> point_projs;
+		auto point_shadow_shader = Resources::s_kPointShadowShader;
+		if (point_shadow_shader)
+		{
+			std::array<glm::mat4, 6> point_projs;
 
-		//	// 点光源阴影
-		//	pl_shadow_rt_->fbo()->Bind();
+			// 点光源阴影
+			pl_shadow_rt_->fbo()->Bind();
 
-		//	ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
+			ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
 
-		//	for (uint32_t i = 0; i < point_lights.size(); ++i)
-		//	{
-		//		auto light = point_lights[i];
-		//		glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
+			for (uint32_t i = 0; i < point_lights.size(); ++i)
+			{
+				auto light = point_lights[i];
+				glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
 
-		//		float near_plane = 1.0f;
-		//		float far_plane = 75.0f;
-		//		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
-		//		point_projs[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		//		point_projs[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		//		point_projs[2] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		//		point_projs[3] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		//		point_projs[4] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0));
-		//		point_projs[5] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0));
-		//		
-		//	}
+				float near_plane = 1.0f;
+				float far_plane = 75.0f;
+				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
+				point_projs[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+				point_projs[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+				point_projs[2] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+				point_projs[3] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0,-1.0));
+				point_projs[4] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
+				point_projs[5] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
+			}
 
-		//	pl_shadow_rt_->fbo()->UnBind();
-		//}
+			pl_shadow_rt_->fbo()->UnBind();
+		}
 	}
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
