@@ -47,6 +47,8 @@ namespace aurora
 		void StartRenderObject(const RenderObject& render_object);
 		void DrawRenderOperation(const RenderOperation& render_operation);
 
+		void RenderSkyBox();
+
 		ConfigPtr config_ptr_;
 		OGLDeviceContextPtr ogl_device_context_ptr_;
 
@@ -68,6 +70,8 @@ namespace aurora
 
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
 		TexturePtr texture_;
+		TexturePtr texture_cube_;
+		TexturePtr sky_box_;
 	};
 }
 

@@ -12,5 +12,5 @@ void main()
 	light_distance /= far_plane;
 	
 	// 显示写入深度
-	gl_FragDepth = light_distance;
+	gl_FragDepth = 0.5;
 }

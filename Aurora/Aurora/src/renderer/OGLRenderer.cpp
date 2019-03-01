@@ -23,6 +23,51 @@ float screen_quad[] =
 	1.0f,-1.0f,0.0f, 1.0f,0.0f
 };
 
+float skybox_vertices[] = {
+	// positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f
+};
+
 namespace aurora
 {
 	static std::unordered_map<RenderOperation::OperationType, GLenum> s_OperationTypeByDrawEnumMap =
@@ -87,6 +132,7 @@ namespace aurora
 
 		shader_ = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
 		texture_ = LoadTexture2D("1003.jpg");
+		texture_cube_ = LoadTextureCube("ame_bluefreeze/bluefreeze_bk.tga", "ame_bluefreeze/bluefreeze_bk.tga", "ame_bluefreeze/bluefreeze_bk.tga", "ame_bluefreeze/bluefreeze_bk.tga", "ame_bluefreeze/bluefreeze_bk.tga", "ame_bluefreeze/bluefreeze_bk.tga");
 
 		return true;
 	}
@@ -162,14 +208,17 @@ namespace aurora
 					}
 				}
 			}
+
+			dl_shadow_rt_->fbo()->UnBind();
 		}
 
-		dl_shadow_rt_->fbo()->UnBind();
-
+		
 		auto point_shadow_shader = Resources::s_kPointShadowShader;
 		if (point_shadow_shader)
 		{
-			std::array<glm::mat4, 6> point_projs;
+			point_shadow_shader->Bind();
+
+			std::array<glm::mat4, 6> shadow_matrices;
 
 			// 点光源阴影
 			pl_shadow_rt_->fbo()->Bind();
@@ -179,17 +228,54 @@ namespace aurora
 			for (uint32_t i = 0; i < point_lights.size(); ++i)
 			{
 				auto light = point_lights[i];
-				glm::mat4 light_view = glm::lookAt(light.position, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));
 
-				float near_plane = 1.0f;
+				float near_plane = 0.1f;
 				float far_plane = 75.0f;
 				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
-				point_projs[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
-				point_projs[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
-				point_projs[2] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
-				point_projs[3] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0,-1.0));
-				point_projs[4] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
-				point_projs[5] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
+				shadow_matrices[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+				shadow_matrices[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+				shadow_matrices[2] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+				shadow_matrices[3] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0,-1.0));
+				shadow_matrices[4] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
+				shadow_matrices[5] = projection * glm::lookAt(light.position, light.position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
+
+				for (uint32_t j = 0; j < 6; ++j)
+				{
+					point_shadow_shader->CommitMat4("shadow_matrices[" + std::to_string(j) + "]", shadow_matrices[j]);
+				}
+				point_shadow_shader->CommitFloat("far_plane", far_plane);
+
+				for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end(); ++rgm_iter)
+				{
+					auto render_group = rgm_iter->second;
+					for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
+					{
+						auto render_queue = rg_iter->second;
+						for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
+						{
+							auto render_object = *rq_iter;
+							shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
+							
+							for (int face = 0; face < 6; ++face)
+							{
+								auto vertex_buffer = render_object.GetRenderOperation().vao()->vertex_buffer();
+								for (int count = 0; count < vertex_buffer->vertex_count(); ++count)
+								{
+									glm::vec3 position;
+									std::memcpy(&position, vertex_buffer->GetRawData() + sizeof(glm::vec3) * count, sizeof(glm::vec3));
+									auto pos = shadow_matrices[face] * render_object.model_matrix() * glm::vec4(position, 1.0f);
+									pos = pos / pos.w;
+									if (pos.x >= -1 && pos.x <= 1 && pos.y >= -1 && pos.y <= 1)
+									{
+										std::cout << "face : " << face << " " << pos.x << " " << pos.y << " " << pos.z << " " << pos.w << std::endl;
+									}
+								}
+							}
+
+							DrawRenderOperation(render_object.GetRenderOperation());
+						}
+					}
+				}
 			}
 
 			pl_shadow_rt_->fbo()->UnBind();
@@ -198,10 +284,10 @@ namespace aurora
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
-		RenderShadowPass(render_group_map);
+		//RenderShadowPass(render_group_map);
 		ChangeViewport(0, 0, window_width_, window_height_);
 
-		shader_->Bind();
+		/*shader_->Bind();
 
 		shader_->CommitInt("tex_shadow", 0);
 
@@ -211,12 +297,12 @@ namespace aurora
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 		CHECK_GL_ERROR_DEBUG();
-		shader_->UnBind();
+		shader_->UnBind();*/
 
-		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}*/
+		}
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
@@ -232,7 +318,7 @@ namespace aurora
 		//auto material = render_queue.materail();
 		for (auto iter = render_queue.begin(); iter != render_queue.end(); ++iter)
 		{
-			if (iter->visible_)
+			//if (iter->visible_)
 			{
 				StartRenderObject(*iter);
 			}
@@ -324,6 +410,13 @@ namespace aurora
 				shader->CommitInt("tex_dl_shadow", 5);
 			}
 
+			auto tex_pl_shadow = pl_shadow_rt_->depth_texture();
+			if (tex_pl_shadow)
+			{
+				tex_pl_shadow->Bind(6);
+				shader->CommitInt("tex_pl_shadow", 6);
+			}
+
 			for (uint32_t i = 0; i < dl_space_matrixs_.size(); ++i)
 			{
 				char name[256];
@@ -358,5 +451,10 @@ namespace aurora
 
 		// 取消绑定
 		glBindVertexArray(0);
+	}
+
+	void OGLRenderer::RenderSkyBox()
+	{
+		
 	}
 }

@@ -98,14 +98,14 @@ public:
 		auto mat = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0));
 		auto mat2 = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(0.0,1.0,0.0));
 
-		/*auto point_light_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kPointLight);
+		auto point_light_obj = CREATE_GAMEOBJECT(GameObjectFactory::s_kPointLight);
 		Context::GetInstance()->scene_manager()->AddToRootNode(point_light_obj);
-		
-		point_light_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 5, 10));
+
+		point_light_obj->GetComponent<SceneNode>()->set_local_position(glm::vec3(0, 10, 0));
 
 		auto point_light = point_light_obj->GetComponent<PointLight>();
 		point_light->set_color(glm::vec3(1.0f, 0.0f, 0.0f));
-		point_light->set_intensity(2.0f);*/
+		point_light->set_intensity(2.0f);
 
 		glm::vec3 front(0.0, -1.0, 0.0);
 		glm::vec3 up(0.0, 1.0, 0.0);

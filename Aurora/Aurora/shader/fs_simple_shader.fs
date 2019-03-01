@@ -12,6 +12,9 @@ uniform sampler2D tex_dl_shadow;
 
 uniform int dir_light_count;
 
+uniform samplerCube tex_pl_shadow;
+uniform float far_plane;
+
 struct PointLight
 {
 	vec3 position;
@@ -101,8 +104,26 @@ float ShadowCalculation(vec4 frag_dir_light_space)
 	*/
 }
 
+float PointShadowCalculation(vec3 frag_pos,vec3 light_pos)
+{
+	vec3 light_to_frag = frag_pos - light_pos;
+	float closest_depth = texture(tex_pl_shadow,light_to_frag).r * far_plane;
+	float current_depth = length(light_to_frag);
+	if (current_depth - 0.005 > closest_depth) 
+	{
+		return 0.0;
+	}
+	else
+	{
+		return 0.0;
+	}
+}
+
 void main()
 {
+	//vec3 light_to_frag = frag_position - point_lights[0].position;
+	//gl_FragColor = vec4(vec3(texture(tex_pl_shadow,light_to_frag).r),1.0);
+
 	// 判断是否在阴影中
 	float shadow = 0.0;
 	for(int i = 0;i < 1;i++)
@@ -113,6 +134,19 @@ void main()
 			break;
 		}
 	}
+	/*
+	if (shadow == 0.0)
+	{
+		for(int i = 0;i<1;i++)
+		{
+			shadow = PointShadowCalculation(frag_position,point_lights[i].position);
+			if(shadow > 0.0)
+			{
+				break;
+			}
+		}
+	}
+	*/
 	
 	int point_light_count = 1;
 
