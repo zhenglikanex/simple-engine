@@ -58,6 +58,8 @@ namespace aurora
 		GLuint vao_;
 		GLuint vbo_;	// 顶点缓存
 		GLuint ebo_;	// 顶点索引缓存
+		GLuint sky_vao_;
+		GLuint sky_vbo_;
 
 		ShaderPtr shader_;
 
@@ -71,7 +73,7 @@ namespace aurora
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
 		TexturePtr texture_;
 		TexturePtr texture_cube_;
-		TexturePtr sky_box_;
+		TexturePtr tex_skybox_;
 	};
 }
 

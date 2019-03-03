@@ -13,4 +13,5 @@ void main()
 	
 	// 显示写入深度
 	gl_FragDepth = 0.5;
+	gl_FragColor = vec4(1.0,0.0,0.0,1.0);
 }

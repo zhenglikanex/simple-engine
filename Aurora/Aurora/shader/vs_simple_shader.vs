@@ -27,7 +27,7 @@ void main()
 {
 	gl_Position = proj_matrix * camera_matrix * model_matrix * vec4(pos.x,pos.y,pos.z,1.0);
 	frag_tex_coord = tex_coord;
-	frag_normal = normal;
+	frag_normal = mat3(transpose(inverse(model_matrix))) * normal;	//应该用uniform传递法线矩阵
 	frag_position = vec3(model_matrix * vec4(pos.x,pos.y,pos.z,1.0));
 	
 	for(int i = 0;i < dir_light_count;++i)
