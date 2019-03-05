@@ -107,23 +107,20 @@ float ShadowCalculation(vec4 frag_dir_light_space)
 float PointShadowCalculation(vec3 frag_pos,vec3 light_pos)
 {
 	vec3 light_to_frag = frag_pos - light_pos;
-	float closest_depth = texture(tex_pl_shadow,light_to_frag).r * far_plane;
+	float closest_depth = texture(tex_pl_shadow,light_to_frag).r;
+	closest_depth *= 10.0;
 	float current_depth = length(light_to_frag);
-	if (current_depth - 0.005 > closest_depth) 
-	{
-		return 0.0;
-	}
-	else
-	{
-		return 0.0;
-	}
+	float bias = 0.05; 
+    float shadow = current_depth - 0.05 > closest_depth ? 1.0 : 0.0;
+    return shadow;
 }
 
 void main()
 {
-	//vec3 light_to_frag = frag_position - point_lights[0].position;
-	//gl_FragColor = vec4(vec3(texture(tex_pl_shadow,light_to_frag).r),1.0);
+	vec3 light_to_frag = frag_position - point_lights[0].position;
+	gl_FragColor = vec4(vec3(texture(tex_pl_shadow,light_to_frag).r),1.0);
 
+	/*
 	// 判断是否在阴影中
 	float shadow = 0.0;
 	for(int i = 0;i < 1;i++)
@@ -134,9 +131,9 @@ void main()
 			break;
 		}
 	}
-	/*
-	if (shadow == 0.0)
-	{
+
+	//if (shadow == 0.0)
+	//{
 		for(int i = 0;i<1;i++)
 		{
 			shadow = PointShadowCalculation(frag_position,point_lights[i].position);
@@ -145,8 +142,7 @@ void main()
 				break;
 			}
 		}
-	}
-	*/
+	//}
 	
 	int point_light_count = 1;
 
@@ -162,10 +158,12 @@ void main()
 	
 	for(int i = 0;i < point_light_count;i++)
 	{
-		final_frag_color = final_frag_color + ComputePointLighting(frag_color,point_lights[i]);
+		final_frag_color = final_frag_color + (1.0 - shadow) * ComputePointLighting(frag_color,point_lights[i]);
 	}
 	
 	gl_FragColor = vec4(final_frag_color,1.0);
 	
 	//gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+	*/
+	
 }

@@ -112,7 +112,7 @@ namespace aurora
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 8192,8192, 0, true, false);	
-		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 1024, 1, true, false);
+		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 1024, 0, true, false);
 		CHECK_GL_ERROR_DEBUG();
 
 		glGenVertexArrays(1, &vao_);
@@ -143,6 +143,25 @@ namespace aurora
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 		glBindVertexArray(0);
+
+		glGenTextures(1, &tex_depth_);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, tex_depth_);
+		for (int i = 0; i < 6; ++i)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		glGenFramebuffers(1, &fbo_);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tex_depth_, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		shader_ = LoadShader("shader/vs_shadow_map.vs", "shader/fs_shadow_map.fs");
 		texture_ = LoadTexture2D("1003.jpg");
@@ -231,20 +250,22 @@ namespace aurora
 		if (point_shadow_shader)
 		{
 			point_shadow_shader->Bind();
-
+			
 			std::array<glm::mat4, 6> shadow_matrices;
 
 			// 点光源阴影
 			pl_shadow_rt_->fbo()->Bind();
+			//glEnable(GL_DEPTH_TEST);
+			//glDepthMask(GL_LESS);
+			glClear(GL_DEPTH_BUFFER_BIT);
 
 			ChangeViewport(0, 0, pl_shadow_rt_->width(), pl_shadow_rt_->height());
 
 			for (uint32_t i = 0; i < point_lights.size(); ++i)
 			{
 				auto light = point_lights[i];
-				light.position = glm::vec3(0, 0, 0);
-				float near_plane = 0.1f;
-				float far_plane = 75.0f;
+				float near_plane = 1.0f;
+				float far_plane = 10.0f;
 				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
 				shadow_matrices[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
 				shadow_matrices[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
@@ -258,45 +279,42 @@ namespace aurora
 					point_shadow_shader->CommitMat4("shadow_matrices[" + std::to_string(j) + "]", shadow_matrices[j]);
 				}
 				point_shadow_shader->CommitFloat("far_plane", far_plane);
-
-				glBindVertexArray(sky_vao_);
-				glDrawArrays(GL_TRIANGLES, 0, sizeof(skybox_vertices) / sizeof(float));
 				
+				for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end(); ++rgm_iter)
+				{
+					auto render_group = rgm_iter->second;
+					for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
+					{
+						auto render_queue = rg_iter->second;
+						for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
+						{
+							auto render_object = *rq_iter;
+							point_shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
+							
+							/*for (int face = 0; face < 6; ++face)
+							{
+								auto vertex_buffer = render_object.GetRenderOperation().vao()->vertex_buffer();
+								for (int count = 0; count < vertex_buffer->vertex_count(); ++count)
+								{
+									glm::vec3 position;
+									std::memcpy(&position, vertex_buffer->GetRawData() + sizeof(glm::vec3) * count, sizeof(glm::vec3));
+									auto pos = shadow_matrices[face] * render_object.model_matrix() * glm::vec4(position, 1.0f);
+									pos = pos / pos.w;
+									if (pos.x >= -1 && pos.x <= 1 && pos.y >= -1 && pos.y <= 1)
+									{
+										std::cout << "face : " << face << " " << pos.x << " " << pos.y << " " << pos.z << " " << pos.w << std::endl;
+									}
+								}
+							}*/
 
-				//for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end(); ++rgm_iter)
-				//{
-				//	auto render_group = rgm_iter->second;
-				//	for (auto rg_iter = render_group.begin(); rg_iter != render_group.end(); ++rg_iter)
-				//	{
-				//		auto render_queue = rg_iter->second;
-				//		for (auto rq_iter = render_queue.begin(); rq_iter != render_queue.end(); ++rq_iter)
-				//		{
-				//			auto render_object = *rq_iter;
-				//			shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
-				//			
-				//			/*for (int face = 0; face < 6; ++face)
-				//			{
-				//				auto vertex_buffer = render_object.GetRenderOperation().vao()->vertex_buffer();
-				//				for (int count = 0; count < vertex_buffer->vertex_count(); ++count)
-				//				{
-				//					glm::vec3 position;
-				//					std::memcpy(&position, vertex_buffer->GetRawData() + sizeof(glm::vec3) * count, sizeof(glm::vec3));
-				//					auto pos = shadow_matrices[face] * render_object.model_matrix() * glm::vec4(position, 1.0f);
-				//					pos = pos / pos.w;
-				//					if (pos.x >= -1 && pos.x <= 1 && pos.y >= -1 && pos.y <= 1)
-				//					{
-				//						std::cout << "face : " << face << " " << pos.x << " " << pos.y << " " << pos.z << " " << pos.w << std::endl;
-				//					}
-				//				}
-				//			}*/
-
-				//			DrawRenderOperation(render_object.GetRenderOperation());
-				//		}
-				//	}
-				//}
+							DrawRenderOperation(render_object.GetRenderOperation());
+						}
+					}
+				}
 			}
 
 			pl_shadow_rt_->fbo()->UnBind();
+			//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 	}
 
@@ -317,12 +335,12 @@ namespace aurora
 		CHECK_GL_ERROR_DEBUG();
 		shader_->UnBind();*/
 
-		/*for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
 		{
 			Render(iter->second);
-		}*/
+		}
 
-		RenderSkyBox();
+		//RenderSkyBox();
 	}
 
 	void OGLRenderer::Render(const RenderGroup& render_group)
@@ -444,6 +462,7 @@ namespace aurora
 				shader->CommitMat4(name, dl_space_matrixs_[i]);
 			}
 
+			//shader->CommitFloat("far_plane", 75.0f);
 
 			// 提交顶点数据
 			DrawRenderOperation(render_object.GetRenderOperation());
@@ -485,9 +504,9 @@ namespace aurora
 
 			glBindVertexArray(sky_vao_);
 
-			//pl_shadow_rt_->depth_texture()->Bind(0);
-			pl_shadow_rt_->GetColorTexture(0)->Bind(0);
-
+			pl_shadow_rt_->depth_texture()->Bind(0);
+			//pl_shadow_rt_->GetColorTexture(0)->Bind(0);
+			//glBindTexture(GL_TEXTURE_CUBE_MAP, tex_depth_);
 			//texture_cube_->Bind(0);
 
 			shader->CommitInt("tex_skybox",0);

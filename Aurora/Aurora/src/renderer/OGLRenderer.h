@@ -74,6 +74,9 @@ namespace aurora
 		TexturePtr texture_;
 		TexturePtr texture_cube_;
 		TexturePtr tex_skybox_;
+
+		GLuint fbo_;
+		GLuint tex_depth_;
 	};
 }
 
