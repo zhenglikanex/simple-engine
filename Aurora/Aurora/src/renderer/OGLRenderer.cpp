@@ -113,14 +113,23 @@ namespace aurora
 
 		dl_shadow_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kRGBA, 8192,8192, 0, true, false);	
 		pl_shadow_rt_ = MakeRenderTextureCubePtr(BaseRenderTexture::TextureFormatType::kRGBA, 1024, 1024, 0, true, false);
+		hdr_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kHalfFloat, window_width_, window_height_,2,true,false);
+		hdr_rt_->GetColorTexture(0)->ApplyLinearFilter();
+		hdr_rt_->GetColorTexture(1)->ApplyLinearFilter();
+
+		pingpong_blur_rt_[0] = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kHalfFloat, 256, 256, 1, false, false);
+		pingpong_blur_rt_[1] = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kHalfFloat, 256, 256, 1, false, false);
+
+		blur_rt_ = MakeRenderTexturePtr(BaseRenderTexture::TextureFormatType::kHalfFloat, window_width_, window_height_, 2, false, false);
+
 		CHECK_GL_ERROR_DEBUG();
 
-		glGenVertexArrays(1, &vao_);
-		glGenBuffers(1, &vbo_);
+		glGenVertexArrays(1, &quad_vao_);
+		glGenBuffers(1, &quad_vbo_);
 
-		glBindVertexArray(vao_);
+		glBindVertexArray(quad_vao_);
 
-		glBindBuffer(GL_ARRAY_BUFFER,vbo_);
+		glBindBuffer(GL_ARRAY_BUFFER, quad_vbo_);
 		glBufferData(GL_ARRAY_BUFFER,sizeof(screen_quad), screen_quad, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
@@ -265,7 +274,7 @@ namespace aurora
 			{
 				auto light = point_lights[i];
 				float near_plane = 1.0f;
-				float far_plane = 10.0f;
+				float far_plane = 75.0f;
 				glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)pl_shadow_rt_->width() / (float)pl_shadow_rt_->height(), near_plane, far_plane);
 				shadow_matrices[0] = projection * glm::lookAt(light.position, light.position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
 				shadow_matrices[1] = projection * glm::lookAt(light.position, light.position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
@@ -279,6 +288,7 @@ namespace aurora
 					point_shadow_shader->CommitMat4("shadow_matrices[" + std::to_string(j) + "]", shadow_matrices[j]);
 				}
 				point_shadow_shader->CommitFloat("far_plane", far_plane);
+				point_shadow_shader->CommitVec3("light_pos", light.position);
 				
 				for (auto rgm_iter = render_group_map.begin(); rgm_iter != render_group_map.end(); ++rgm_iter)
 				{
@@ -291,22 +301,6 @@ namespace aurora
 							auto render_object = *rq_iter;
 							point_shadow_shader->CommitMat4("model_matrix", render_object.model_matrix());
 							
-							/*for (int face = 0; face < 6; ++face)
-							{
-								auto vertex_buffer = render_object.GetRenderOperation().vao()->vertex_buffer();
-								for (int count = 0; count < vertex_buffer->vertex_count(); ++count)
-								{
-									glm::vec3 position;
-									std::memcpy(&position, vertex_buffer->GetRawData() + sizeof(glm::vec3) * count, sizeof(glm::vec3));
-									auto pos = shadow_matrices[face] * render_object.model_matrix() * glm::vec4(position, 1.0f);
-									pos = pos / pos.w;
-									if (pos.x >= -1 && pos.x <= 1 && pos.y >= -1 && pos.y <= 1)
-									{
-										std::cout << "face : " << face << " " << pos.x << " " << pos.y << " " << pos.z << " " << pos.w << std::endl;
-									}
-								}
-							}*/
-
 							DrawRenderOperation(render_object.GetRenderOperation());
 						}
 					}
@@ -314,30 +308,37 @@ namespace aurora
 			}
 
 			pl_shadow_rt_->fbo()->UnBind();
-			//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 	}
 
 	void OGLRenderer::Render(const RenderGroupMap& render_group_map)
 	{
 		RenderShadowPass(render_group_map);
-		ChangeViewport(0, 0, window_width_, window_height_);
 
-		/*shader_->Bind();
-
-		shader_->CommitInt("tex_shadow", 0);
-
-		dl_shadow_rt_->depth_texture()->Bind(0);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);
-		CHECK_GL_ERROR_DEBUG();
-		shader_->UnBind();*/
-
-		for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+		if (hdr_rt_)
 		{
-			Render(iter->second);
+			ChangeViewport(0, 0, hdr_rt_->width(), hdr_rt_->height());
+
+			hdr_rt_->fbo()->Bind();
+
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+			{
+				Render(iter->second);
+			}
+			hdr_rt_->fbo()->UnBind();
+
+			PostProcessing();
+		}
+		else 
+		{
+			ChangeViewport(0, 0,window_width_,window_height_);
+			for (auto iter = render_group_map.begin(); iter != render_group_map.end(); ++iter)
+			{
+				Render(iter->second);
+			}
 		}
 
 		//RenderSkyBox();
@@ -462,7 +463,7 @@ namespace aurora
 				shader->CommitMat4(name, dl_space_matrixs_[i]);
 			}
 
-			//shader->CommitFloat("far_plane", 75.0f);
+			shader->CommitFloat("far_plane", 75.0f);
 
 			// 提交顶点数据
 			DrawRenderOperation(render_object.GetRenderOperation());
@@ -474,6 +475,8 @@ namespace aurora
 	void OGLRenderer::DrawRenderOperation(const RenderOperation& render_operation)
 	{
 		auto& vao = render_operation.vao();
+
+		CHECK_GL_ERROR_DEBUG();
 
 		//绑定缓存
 		glBindVertexArray(vao->id());
@@ -522,6 +525,95 @@ namespace aurora
 			glDepthFunc(GL_LESS);
 
 			shader->UnBind();
+		}
+	}
+
+	void OGLRenderer::PostProcessing()
+	{
+		CHECK_GL_ERROR_DEBUG();
+		if(hdr_rt_)
+		{
+			auto blur_shader = Resources::s_kBlurShader;
+			blur_shader->Bind();
+
+			bool horizontal = false;
+			bool first = true;
+			// blur处理
+			for (int i = 0; i < 10; ++i)
+			{
+				auto rt = horizontal ? pingpong_blur_rt_[0] : pingpong_blur_rt_[1];
+				auto prev_rt = horizontal ? pingpong_blur_rt_[1] : pingpong_blur_rt_[0];
+
+				rt->fbo()->Bind();
+				ChangeViewport(0, 0, rt->width(), rt->height());
+				glClear(GL_COLOR_BUFFER_BIT);
+
+				blur_shader->CommitBool("horizontal", horizontal);
+				blur_shader->CommitInt("tex", 0);
+
+				if (first)
+				{
+					hdr_rt_->GetColorTexture(1)->Bind(0);
+				}
+				else
+				{
+					prev_rt->GetColorTexture(0)->Bind(0);
+				}
+
+				glBindVertexArray(quad_vao_);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				
+				horizontal = !horizontal;
+				if (first)
+				{
+					first = false;
+				}
+			}
+			//glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+			// 将blur后的纹理添加到hdr上
+			hdr_rt_->fbo()->Bind();
+			ChangeViewport(0, 0, hdr_rt_->width(), hdr_rt_->height());
+			if (horizontal)
+			{
+				pingpong_blur_rt_[0]->GetColorTexture(0)->Bind(0);
+			}
+			else
+			{
+				pingpong_blur_rt_[1]->GetColorTexture(0)->Bind(0);
+			}
+			
+			hdr_rt_->GetColorTexture(0)->Bind(1);
+
+			auto bloom_shader = Resources::s_kBloomShader;
+			bloom_shader->Bind();
+			bloom_shader->CommitInt("tex_bloom", 0);
+			bloom_shader->CommitInt("tex_hdr", 1);
+
+			glBindVertexArray(quad_vao_);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			hdr_rt_->fbo()->UnBind();
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			ChangeViewport(0,0,window_width_, window_height_);
+
+			//auto hdr_shader = Resources::s_kToneMappingHdrShader;
+			auto hdr_shader = Resources::s_kExposureHdr;
+			if (hdr_shader)
+			{
+				hdr_shader->Bind();
+
+				glBindVertexArray(quad_vao_);
+
+				hdr_rt_->GetColorTexture(0)->Bind(0);
+				hdr_shader->CommitInt("tex_hdr", 0);
+				hdr_shader->CommitFloat("exposure", 1);
+
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				hdr_shader->UnBind();
+			}
 		}
 	}
 }

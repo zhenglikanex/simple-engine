@@ -48,6 +48,7 @@ namespace aurora
 		void DrawRenderOperation(const RenderOperation& render_operation);
 
 		void RenderSkyBox();
+		void PostProcessing();
 
 		ConfigPtr config_ptr_;
 		OGLDeviceContextPtr ogl_device_context_ptr_;
@@ -55,9 +56,8 @@ namespace aurora
 		uint32_t window_width_;
 		uint32_t window_height_;
 
-		GLuint vao_;
-		GLuint vbo_;	// 顶点缓存
-		GLuint ebo_;	// 顶点索引缓存
+		GLuint quad_vao_;
+		GLuint quad_vbo_;	// 顶点缓存
 		GLuint sky_vao_;
 		GLuint sky_vbo_;
 
@@ -71,6 +71,10 @@ namespace aurora
 		std::vector<glm::mat4> dl_space_matrixs_;
 
 		RenderTextureCubePtr pl_shadow_rt_;	// 点光源的阴影
+		RenderTexturePtr hdr_rt_;
+		RenderTexturePtr pingpong_blur_rt_[2];
+		RenderTexturePtr blur_rt_;
+
 		TexturePtr texture_;
 		TexturePtr texture_cube_;
 		TexturePtr tex_skybox_;

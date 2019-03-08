@@ -101,13 +101,24 @@ namespace aurora
 			color_textures_.push_back(texture);
 
 			auto attachment = MakeTextureBufferAttachmentPtr(FrameBufferAttachment::AttachmentType::kColor, texture);
-			fbo_->AttachAttachment(attachment);
+			fbo_->AttachAttachment(attachment,i);
 		}
 
 		if (color_texture_count <= 0)
 		{
 			glReadBuffer(GL_NONE);
 			glDrawBuffer(GL_NONE);
+		}
+
+		if (color_texture_count > 1)
+		{
+			GLuint* attchments = new GLuint[color_texture_count];
+			for (int i = 0; i < color_texture_count; ++i)
+			{
+				attchments[i] = GL_COLOR_ATTACHMENT0 + i;
+			}
+			glDrawBuffers(color_texture_count, attchments);
+			delete[] attchments;
 		}
 	}
 

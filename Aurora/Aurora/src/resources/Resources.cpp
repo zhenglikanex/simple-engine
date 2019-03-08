@@ -19,6 +19,10 @@ namespace aurora
 	ShaderPtr Resources::s_kShadowShader = nullptr;
 	ShaderPtr Resources::s_kPointShadowShader = nullptr;
 	ShaderPtr Resources::s_kSkyBoxShader = nullptr;
+	ShaderPtr Resources::s_kToneMappingHdrShader = nullptr;
+	ShaderPtr Resources::s_kExposureHdr = nullptr;
+	ShaderPtr Resources::s_kBlurShader = nullptr;
+	ShaderPtr Resources::s_kBloomShader = nullptr;
 
 	void Resources::CreateDefaultMaterial()
 	{
@@ -39,6 +43,10 @@ namespace aurora
 		Resources::s_kShadowShader = LoadShader("shader/vs_shadow.vs", "shader/fs_shadow.fs");
 		Resources::s_kPointShadowShader = LoadShader("shader/vs_point_light_shadow.vs", "shader/gs_point_light_shadow.gs", "shader/fs_point_light_shadow.fs");
 		Resources::s_kSkyBoxShader = LoadShader("shader/vs_skybox.vs", "shader/fs_skybox.fs");
+		Resources::s_kToneMappingHdrShader = LoadShader("shader/tone_mapping_hdr.vs", "shader/tone_mapping_hdr.fs");
+		Resources::s_kExposureHdr = LoadShader("shader/exposure_hdr.vs","shader/exposure_hdr.fs");
+		Resources::s_kBlurShader = LoadShader("shader/blur.vs", "shader/blur.fs");
+		Resources::s_kBloomShader = LoadShader("shader/bloom.vs", "shader/bloom.fs");
 	}
 
 	std::shared_ptr<void> Resources::FindResource(const std::string& name)

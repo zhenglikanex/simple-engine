@@ -25,6 +25,10 @@ namespace aurora
 		static ShaderPtr s_kPointShadowShader;
 
 		static ShaderPtr s_kSkyBoxShader;
+		static ShaderPtr s_kToneMappingHdrShader;
+		static ShaderPtr s_kExposureHdr;
+		static ShaderPtr s_kBlurShader;
+		static ShaderPtr s_kBloomShader;
 	public:
 		using NameByResourceMap = std::unordered_map<std::string, std::shared_ptr<void>>;
 
